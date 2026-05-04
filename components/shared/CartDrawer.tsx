@@ -193,14 +193,9 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
             style={{ zIndex: 100000 }}
           >
             {/* HEADER */}
-            <div className="flex-shrink-0 flex justify-between items-center px-6 py-5 shadow-[0px_4px_4px_0px_rgba(0,0,0,0.05)] mt-10">
+            <div className="flex-shrink-0 flex justify-between items-center px-6 py-5 shadow-[0px_4px_4px_0px_rgba(0,0,0,0.05)] ">
               <h2 className="font-medium text-[24px] tracking-[-0.64px]">Tu carrito</h2>
               <div className="flex items-center gap-3">
-                <button
-                  type="button"
-                  className="w-[50px] h-[34px] bg-[#191817] rounded-[15px] flex items-center justify-center"
-                >
-                </button>
                 <button
                   type="button"
                   onClick={onClose}
