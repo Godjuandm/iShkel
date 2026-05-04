@@ -20,6 +20,17 @@ type Product = {
       altText: string | null;
     }[];
   };
+  variants?: {
+    nodes: {
+      id: string;
+      title: string;
+      availableForSale: boolean;
+      price: {
+        amount: string;
+        currencyCode: string;
+      };
+    }[];
+  };
 };
 
 type ShowroomProps = {
@@ -28,12 +39,17 @@ type ShowroomProps = {
 
 export default function Showroom({ product }: ShowroomProps) {
   const [currentImage, setCurrentImage] = useState(0);
-  const [selectedColor, setSelectedColor] = useState(1); // 0 = white, 1 = dark
+  const [selectedColor, setSelectedColor] = useState(1);
   const [selectedDoor, setSelectedDoor] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
 
   const images = product.images.nodes;
   const price = parseFloat(product.priceRange.minVariantPrice.amount);
   const formattedPrice = `COP ${price.toLocaleString('es-CO')}`;
+
+  // Get the first variant ID (or you can add variant selection)
+  const variantId = product.variants?.nodes?.[0]?.id;
 
   const nextImage = () => {
     setCurrentImage((prev) => (prev + 1) % images.length);
@@ -41,6 +57,72 @@ export default function Showroom({ product }: ShowroomProps) {
 
   const prevImage = () => {
     setCurrentImage((prev) => (prev - 1 + images.length) % images.length);
+  };
+
+  // Handle "Comprar ahora" - Direct to checkout
+  const handleBuyNow = async () => {
+    if (!variantId) {
+      // Fallback: redirect to Shopify product page
+      window.location.href = `https://ishkel.myshopify.com/products/${product.handle}`;
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const response = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ variantId, quantity: 1 }),
+      });
+
+      const data = await response.json();
+
+      if (data.checkoutUrl) {
+        window.location.href = data.checkoutUrl;
+      } else {
+        // Fallback
+        window.location.href = `https://ishkel.myshopify.com/products/${product.handle}`;
+      }
+    } catch (error) {
+      console.error('Checkout error:', error);
+      // Fallback to Shopify product page
+      window.location.href = `https://ishkel.myshopify.com/products/${product.handle}`;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Handle "Añadir al carrito"
+  const handleAddToCart = async () => {
+    if (!variantId) {
+      alert('Producto no disponible');
+      return;
+    }
+
+    setIsAddingToCart(true);
+
+    try {
+      const response = await fetch('/api/cart', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ variantId, quantity: 1 }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Trigger cart update event and open drawer
+        window.dispatchEvent(new CustomEvent('cart-updated', { detail: { openDrawer: true } }));
+      } else {
+        alert('Error al añadir al carrito');
+      }
+    } catch (error) {
+      console.error('Add to cart error:', error);
+      alert('Error al añadir al carrito');
+    } finally {
+      setIsAddingToCart(false);
+    }
   };
 
   return (
@@ -194,26 +276,32 @@ export default function Showroom({ product }: ShowroomProps) {
             </div>
 
             {/* Comprar ahora - Outline button */}
-            <button className="w-full h-[48px] rounded-[15px] border-2 border-[#191817] flex items-center justify-center hover:bg-[#191817] hover:text-white transition-all duration-300 group">
-            <span className="font-neue font-medium text-[14.5px] text-[#191817] tracking-[0.1px] group-hover:text-white transition-colors duration-300">
-                Comprar ahora
-            </span>
+            <button 
+              onClick={handleBuyNow}
+              disabled={isLoading}
+              className="w-full h-[48px] rounded-[15px] border-2 border-[#191817] flex items-center justify-center hover:bg-[#191817] hover:text-white transition-all duration-300 group disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <span className="font-neue font-medium text-[14.5px] text-[#191817] tracking-[0.1px] group-hover:text-white transition-colors duration-300">
+                {isLoading ? 'Cargando...' : 'Comprar ahora'}
+              </span>
             </button>
 
-            {/* Añadir al carrito - Metallic dark button (same as Hero style) */}
-            <div className="relative mt-3 w-full h-[48px] group cursor-pointer">
-            {/* Outer gradient glow */}
-            <div className="absolute inset-0 rounded-[15px] bg-gradient-to-r from-[#3b3b3b] to-[#a1a1a1] blur-[2px] opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
-            <div className="relative rounded-[15px] bg-gradient-to-r from-[#3b3b3b] to-[#a1a1a1] p-[2px] w-full h-[48px]">
+            {/* Añadir al carrito - Metallic dark button */}
+            <button 
+              onClick={handleAddToCart}
+              disabled={isAddingToCart}
+              className="relative mt-3 w-full h-[48px] group cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {/* Outer gradient glow */}
+              <div className="absolute inset-0 rounded-[15px] bg-gradient-to-r from-[#3b3b3b] to-[#a1a1a1] blur-[2px] opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
+              <div className="relative rounded-[15px] bg-gradient-to-r from-[#3b3b3b] to-[#a1a1a1] p-[2px] w-full h-[48px]">
                 <div className="rounded-[13px] bg-[#070707] w-full h-full flex items-center justify-center relative overflow-hidden">
-                <span className="relative z-10 font-neue font-normal text-[20px] text-white">
-                    Añadir al carrito
-                </span>
+                  <span className="relative z-10 font-neue font-normal text-[20px] text-white">
+                    {isAddingToCart ? 'Añadiendo...' : 'Añadir al carrito'}
+                  </span>
                 </div>
-            </div>
-            </div>
-
-        
+              </div>
+            </button>
 
           </div>
         </div>
@@ -221,5 +309,3 @@ export default function Showroom({ product }: ShowroomProps) {
     </section>
   );
 }
-
-

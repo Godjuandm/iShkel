@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { DM_Sans, Inter, Lexend_Deca } from "next/font/google";
 import "./globals.css";
+import { CartProvider } from "@/context/CartContext";
 
 const dmSans = DM_Sans({
   variable: "--font-dm-sans",
@@ -30,7 +31,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${dmSans.variable} ${inter.variable} ${lexendDeca.variable}`}>
       <body className="font-neue antialiased bg-[#070707] text-white">
-        {children}
+        <CartProvider>
+          {children}
+        </CartProvider>
       </body>
     </html>
   );
