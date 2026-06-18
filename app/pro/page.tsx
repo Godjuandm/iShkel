@@ -137,7 +137,7 @@ export default function IShkelProPage() {
       {/* HERO */}
       <section className="pt-32 sm:pt-36 lg:pt-40 pb-12 lg:pb-16 px-5 sm:px-8 lg:px-14">
         <div className="max-w-[1100px] mx-auto text-center">
-          <p className="text-[#191817] text-[20px] sm:text-[20px] font-neue tracking-[0.18em] uppercase mb-4">
+          <p className="text-[#191817] text-[20px] sm:text-[20px] font-neue font-mediumtracking-[0.18em]  mb-4">
             iShkel
           </p>
           <h1
@@ -224,18 +224,19 @@ export default function IShkelProPage() {
         <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-black/10" />
 
         {/* Content — vertically centered, left-aligned */}
-        <div className="relative z-10 min-h-[800px] sm:min-h-[760px] lg:min-h-[1300px] flex flex-col justify-left pt-32 pl-[-100px] sm:pt-36 lg:pt-40">
+        <div className="relative z-10 min-h-[800px] sm:min-h-[760px] lg:min-h-[1300px] flex flex-col justify-left pt-32 pl-[-100px] sm:pt-36 lg:pt-20">
           <div className="max-w-[1400px] w-full mx-auto px-6 sm:px-10 lg:px-16">
             <div className="max-w-[600px]">
               <h2
-                className="text-white text-[34px] sm:text-[48px] lg:text-[64px] font-neue font-medium leading-[1.08] tracking-[-0.02em]"
+                className="text-white text-[32px] sm:text-[48px] lg:text-[52
+                px] font-neue font-medium leading-[1.08] tracking-[-0.02em]"
                 style={{ textWrap: 'balance' } as React.CSSProperties}
               >
                 El detalle que hace premium tu proyecto.
               </h2>
 
               <p
-                className="mt-6 lg:mt-8 text-white/90 text-[18px] sm:text-[22px] lg:text-[28px] font-neue font-medium leading-[1.35] max-w-[520px]"
+                className="mt-6 lg:mt-8 text-white/90 text-[16px] sm:text-[22px] lg:text-[25px] font-neue font-medium-light leading-[1.35] max-w-[520px]"
                 style={{ textWrap: 'balance' } as React.CSSProperties}
               >
                 Soporte en obra, efecto wow en el showroom y capacidad para gran volumen.

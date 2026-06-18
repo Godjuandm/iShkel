@@ -8,6 +8,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --font-neue: 'Neue Montreal', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -67,6 +68,11 @@
 
 body {
   font-family: 'Neue Montreal', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+strong, b {
+  font-family: 'Neue Montreal', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 500;
 }
 /* ── Marquee ────────────────────────────────────────────────── */
 @keyframes marquee {

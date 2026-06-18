@@ -174,10 +174,10 @@ export default function TestimonialSection() {
           style={{ transitionDelay: inView ? '700ms' : '0ms' }}
         >
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-[64px] font-medium leading-tight tracking-tight">
-            <span className="text-black">La satisfaccion de clientes que usan Ishkel</span>
+            <span className="text-black">La satisfaccion de </span>
             <br />
-            <span className="text-black">clientes que </span>
-            <span className="text-[#555]">confian en Shkell</span>
+            <span className="text-black">clientes que</span>
+            <span className="text-[#555]"> usan Ishkel</span>
           </h2>
           <p className="mt-4 md:mt-6 text-sm md:text-base lg:text-xl text-black/70 max-w-md mx-auto">
             Procesos de Garantia eficaces y instalacion impecables en hogares de las mejores zonas de Bogota, Medellin, Pereira, Armenia, Manizales.

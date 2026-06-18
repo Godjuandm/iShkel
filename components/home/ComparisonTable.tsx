@@ -2,78 +2,114 @@
 
 import Image from 'next/image';
 
+const gradientGold = 'linear-gradient(180deg, #8C857E 0%, #C4B6A6 25%, #F2F2F2 50%, #C4B6A6 75%, #8C857E 100%)';
+
 const products = [
   {
     id: 1,
-    name: 'Cerradura FX 321312',
+    name: 'Fx Camon',
     image: '/Images_Icons/lock 1.png',
-    faceId: false,
-    huella: false,
-    bateria: '20h',
-    resistente: true,
-    tarjetas: 2,
-    precio: '800,000 COP',
     recommended: false,
+    features: {
+      camaraFaceId: 'Sí',
+      huella: 'Sí',
+      bateria: '4200mAh',
+      proteccion: 'IP 66',
+      cilindro: 'Grado C',
+      palma: 'Sí',
+      ppf: 'No',
+      wifi: 'Powered By Tuya',
+      mecanismo: '5 Pasadores (Compatible a 8)',
+      vaultGuard: 'Sí',
+      videoportero: 'Sí',
+      idioma: 'English · Español · Russian',
+      garantia: '12-24 meses',
+      encriptacion: 'AES-256',
+      accesorios: '2 Llaves | 2 Tags',
+    },
   },
   {
     id: 2,
-    name: 'Cerradura FX 321312',
+    name: 'Fx Under',
     image: '/Images_Icons/lock 1.png',
-    faceId: true,
-    huella: true,
-    bateria: '40h',
-    resistente: true,
-    tarjetas: 2,
-    precio: '1,200,000 COP',
-    recommended: false,
+    recommended: true,
+    features: {
+      camaraFaceId: 'Sí',
+      huella: 'Sí',
+      bateria: '4200mAh',
+      proteccion: 'IP 55',
+      cilindro: 'Grado C',
+      palma: 'Sí',
+      ppf: 'Sí',
+      wifi: 'Powered By Tuya | Apertura remota',
+      mecanismo: '5 Pasadores (Compatible a 8)',
+      vaultGuard: 'Sí',
+      videoportero: 'Sí',
+      idioma: 'English · Español · Russian',
+      garantia: '12-24 meses',
+      encriptacion: 'AES-256',
+      accesorios: '2 Llaves | 2 Tags',
+    },
   },
   {
     id: 3,
-    name: 'Cerradura FX 321312',
+    name: 'X | R',
     image: '/Images_Icons/lock 1.png',
-    faceId: true,
-    huella: true,
-    bateria: '100h',
-    resistente: true,
-    tarjetas: 4,
-    precio: '1,500,000 COP',
-    recommended: true,
+    recommended: false,
+    features: {
+      camaraFaceId: 'No',
+      huella: 'Sí',
+      bateria: '3200mAh',
+      proteccion: 'IP 55',
+      cilindro: 'Grado C',
+      palma: 'No',
+      ppf: 'No',
+      wifi: 'Powered By Tuya | Apertura remota | Clave temporal',
+      mecanismo: '5 Pasadores (Compatible a 8)',
+      vaultGuard: 'Sí',
+      videoportero: 'No',
+      idioma: 'English',
+      garantia: '12-24 meses',
+      encriptacion: 'AES-256',
+      accesorios: '2 Llaves | 2 Tags',
+    },
   },
 ];
 
-const FaceIdIcon = () => (
-  <img src="/Images_Icons/faceId.png" alt="Face ID Icon" className="w-[50px] h-[50px]" />
-);
+type FeatureKey = keyof typeof products[0]['features'];
 
-const FingerprintIcon = () => (
-  <img src="/Images_Icons/Huella.png" alt="Fingerprint Icon" className="w-[50px] h-[50px]" />
-);
-
-const WaterIcon = () => (
-  <img src="/Images_Icons/WaterResistanceIcon.png" alt="Water Resistant Icon" className="w-[50px] h-[50px]" />
-);
-
-const CardIcon = () => (
-  <div className="relative w-[50px] h-[38px]">
-    <div className="absolute top-0 left-0 w-[38px] h-[28px] bg-[#f2f2f2] rounded-[5px]" />
-    <div className="absolute top-[10px] left-[12px] w-[38px] h-[28px] bg-[#555] rounded-[5px]" />
-  </div>
-);
+const rows: { key: FeatureKey; label: string }[] = [
+  { key: 'camaraFaceId', label: 'Cámara y Face ID' },
+  { key: 'huella', label: 'Huella | Contraseña | Tag ID' },
+  { key: 'bateria', label: 'Batería de litio' },
+  { key: 'proteccion', label: 'Protección IP' },
+  { key: 'cilindro', label: 'Protección de Cilindro' },
+  { key: 'palma', label: 'Palma' },
+  { key: 'ppf', label: 'Revestimiento tipo PPF' },
+  { key: 'wifi', label: 'Wifi' },
+  { key: 'mecanismo', label: 'Mecanismo' },
+  { key: 'vaultGuard', label: 'Vault Guard' },
+  { key: 'videoportero', label: 'Videoportero 24/7 y registro' },
+  { key: 'idioma', label: 'Idioma' },
+  { key: 'garantia', label: 'Garantía' },
+  { key: 'encriptacion', label: 'Encriptación Militar' },
+  { key: 'accesorios', label: 'Accesorios' },
+];
 
 const GradientText = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
   <span
     className={`bg-clip-text text-transparent ${className}`}
-    style={{
-      backgroundImage: 'linear-gradient(180deg, #8C857E 0%, #C4B6A6 25%, #F2F2F2 50%, #C4B6A6 75%, #8C857E 100%)',
-    }}
+    style={{ backgroundImage: gradientGold }}
   >
     {children}
   </span>
 );
 
-const NotAvailable = () => (
-  <span className="text-[#444] text-2xl font-light">—</span>
-);
+function CellValue({ value }: { value: string }) {
+  const isNo = value === 'No';
+  if (isNo) return <span className="text-[#444] text-lg font-light">—</span>;
+  return <span className="text-[#f2f2f2] text-[15px] text-center leading-snug">{value}</span>;
+}
 
 export default function ComparisonTable() {
   return (
@@ -82,7 +118,7 @@ export default function ComparisonTable() {
 
         {/* Header */}
         <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-[48px] font-medium mb-12 md:mb-16 lg:mb-20">
-          <span className="text-white">Cual iShkel es la mejor </span>
+          <span className="text-white">¿Cuál iShkel es la mejor </span>
           <GradientText>para ti?</GradientText>
         </h2>
 
@@ -90,177 +126,59 @@ export default function ComparisonTable() {
         <div className="hidden lg:block">
 
           {/* Product Headers */}
-          <div className="grid grid-cols-[200px_1fr_1fr_1fr] gap-0 mb-0">
+          <div className="grid grid-cols-[220px_1fr_1fr_1fr] gap-0">
             <div />
             {products.map((product) => (
               <div
                 key={product.id}
-                className={`flex flex-col items-center px-4 pb-6 pt-6 rounded-t-[20px] transition-colors ${
-                  product.recommended ? 'bg-white/[0.05]' : ''
+                className={`flex flex-col items-center px-4 pb-6 pt-6 rounded-t-[20px] ${
+                  product.recommended ? 'bg-white/5' : ''
                 }`}
               >
                 {product.recommended && (
-                  <span className="mb-3 px-4 py-1 rounded-full text-[11px] font-semibold tracking-widest uppercase border border-white/20 text-white/60">
+                  <span className="mb-3 px-4 py-1 rounded-full text-[11px] font-medium tracking-widest uppercase border border-white/20 text-white/60">
                     Recomendado
                   </span>
                 )}
-                <div className="relative w-[169px] h-[170px] mb-4">
-                  <Image
-                    src={product.image}
-                    alt={product.name}
-                    fill
-                    className="object-contain"
-                  />
+                <div className="relative w-35 h-40 mb-4">
+                  <Image src={product.image} alt={product.name} fill className="object-contain" />
                 </div>
-                <p className="text-[24px] font-medium text-center">
-                  <GradientText>Cerradura FX 321312</GradientText>
+                <p className="text-[22px] font-semibold text-center">
+                  <GradientText>{product.name}</GradientText>
                 </p>
               </div>
             ))}
           </div>
 
-          {/* Table Rows */}
+          {/* Rows */}
           <div className="border-t border-[#222]">
-
-            {/* FACE ID Row */}
-            <div className="grid grid-cols-[200px_1fr_1fr_1fr] border-b border-[#222] group hover:bg-white/[0.02] transition-colors">
-              <div className="py-12 px-2 flex items-center">
-                <span className="text-[20px] font-medium tracking-[1.7px] uppercase">
-                  <GradientText>FACE ID</GradientText>
-                </span>
-              </div>
-              {products.map((product) => (
-                <div
-                  key={product.id}
-                  className={`py-12 px-4 flex flex-col items-center justify-center transition-colors ${
-                    product.recommended ? 'bg-white/[0.05]' : ''
-                  }`}
-                >
-                  {product.faceId ? (
-                    <>
-                      <p className="text-[#f2f2f2] text-[16px] text-center mb-4 leading-relaxed">
-                        Implementación de Face ID<br />con tecnología de punta
-                      </p>
-                      <FaceIdIcon />
-                    </>
-                  ) : (
-                    <NotAvailable />
-                  )}
-                </div>
-              ))}
-            </div>
-
-            {/* HUELLA DIGITAL Row */}
-            <div className="grid grid-cols-[200px_1fr_1fr_1fr] border-b border-[#222] group hover:bg-white/[0.02] transition-colors">
-              <div className="py-12 px-2 flex items-center">
-                <span className="text-[20px] font-medium tracking-[1.7px] uppercase">
-                  <GradientText>HUELLA DIGITAL</GradientText>
-                </span>
-              </div>
-              {products.map((product) => (
-                <div
-                  key={product.id}
-                  className={`py-12 px-4 flex flex-col items-center justify-center transition-colors ${
-                    product.recommended ? 'bg-white/[0.05]' : ''
-                  }`}
-                >
-                  {product.huella ? (
-                    <>
-                      <p className="text-[#f2f2f2] text-[16px] text-center mb-4 leading-relaxed">
-                        Desbloqueo biométrico<br />de alta precisión
-                      </p>
-                      <FingerprintIcon />
-                    </>
-                  ) : (
-                    <NotAvailable />
-                  )}
-                </div>
-              ))}
-            </div>
-
-            {/* VIDA DE LA BATERIA Row */}
-            <div className="grid grid-cols-[200px_1fr_1fr_1fr] border-b border-[#222] group hover:bg-white/[0.02] transition-colors">
-              <div className="py-10 px-2 flex items-center">
-                <span className="text-[20px] font-medium tracking-[1.7px] uppercase">
-                  <GradientText>VIDA DE LA BATERÍA</GradientText>
-                </span>
-              </div>
-              {products.map((product) => (
-                <div
-                  key={product.id}
-                  className={`py-10 px-4 flex items-center justify-center transition-colors ${
-                    product.recommended ? 'bg-white/[0.05]' : ''
-                  }`}
-                >
-                  <span className="text-[#f2f2f2] text-[24px] font-bold">{product.bateria}</span>
-                </div>
-              ))}
-            </div>
-
-            {/* RESISTENTE AL AGUA Row */}
-            <div className="grid grid-cols-[200px_1fr_1fr_1fr] border-b border-[#222] group hover:bg-white/[0.02] transition-colors">
-              <div className="py-10 px-2 flex items-center">
-                <span className="text-[20px] font-medium tracking-[1.7px] uppercase">
-                  <GradientText>RESISTENTE AL AGUA</GradientText>
-                </span>
-              </div>
-              {products.map((product) => (
-                <div
-                  key={product.id}
-                  className={`py-10 px-4 flex items-center justify-center transition-colors ${
-                    product.recommended ? 'bg-white/[0.05]' : ''
-                  }`}
-                >
-                  <WaterIcon />
-                </div>
-              ))}
-            </div>
-
-            {/* TARJETAS Row */}
-            <div className="grid grid-cols-[200px_1fr_1fr_1fr] border-b border-[#222] group hover:bg-white/[0.02] transition-colors">
-              <div className="py-10 px-2 flex items-center">
-                <span className="text-[20px] font-medium tracking-[1.7px] uppercase">
-                  <GradientText>TARJETAS</GradientText>
-                </span>
-              </div>
-              {products.map((product) => (
-                <div
-                  key={product.id}
-                  className={`py-10 px-4 flex flex-col items-center justify-center gap-4 transition-colors ${
-                    product.recommended ? 'bg-white/[0.05]' : ''
-                  }`}
-                >
-                  <span className="text-[#f2f2f2] text-[16px]">{product.tarjetas}x Tarjetas</span>
-                  <CardIcon />
-                </div>
-              ))}
-            </div>
-
-            {/* PRECIO Row */}
-            <div className="grid grid-cols-[200px_1fr_1fr_1fr] border-b border-[#222]">
-              <div className="py-10 px-2 flex items-center">
-                <span className="text-[#f2f2f2] text-[20px] tracking-[1.7px] uppercase font-medium">PRECIO</span>
-              </div>
-              {products.map((product) => (
-                <div
-                  key={product.id}
-                  className={`py-10 px-4 flex items-center justify-center rounded-b-[20px] transition-colors ${
-                    product.recommended ? 'bg-white/[0.05]' : ''
-                  }`}
-                >
-                  <span
-                    className={`text-[16px] font-semibold ${
-                      product.recommended ? 'text-white text-[18px]' : 'text-[#f2f2f2]'
-                    }`}
-                  >
-                    {product.precio}
+            {rows.map((row, idx) => (
+              <div
+                key={row.key}
+                className={`grid grid-cols-[220px_1fr_1fr_1fr] border-b border-[#222] hover:bg-white/2 transition-colors ${
+                  idx === rows.length - 1 ? 'rounded-b-[20px]' : ''
+                }`}
+              >
+                <div className="py-8 px-2 flex items-center">
+                  <span className="text-[15px] font-medium tracking-[1.4px] uppercase">
+                    <GradientText>{row.label}</GradientText>
                   </span>
                 </div>
-              ))}
-            </div>
+                {products.map((product) => (
+                  <div
+                    key={product.id}
+                    className={`py-8 px-4 flex items-center justify-center ${
+                      product.recommended ? 'bg-white/5' : ''
+                    } ${idx === rows.length - 1 && product.recommended ? 'rounded-b-[20px]' : ''}`}
+                  >
+                    <CellValue value={product.features[row.key]} />
+                  </div>
+                ))}
+              </div>
+            ))}
           </div>
 
-          {/* CTA Button */}
+          {/* CTA */}
           <div className="flex justify-end mt-16">
             <button className="px-16 py-4 border-2 border-white rounded-[15px] text-white text-[20px] font-medium hover:bg-white hover:text-[#070707] transition-colors duration-300">
               Comparar ahora
@@ -268,51 +186,42 @@ export default function ComparisonTable() {
           </div>
         </div>
 
-        {/* Tablet Table (md screens) */}
+        {/* Tablet Table */}
         <div className="hidden md:block lg:hidden overflow-x-auto">
           <div className="min-w-[700px]">
-            <div className="grid grid-cols-[150px_1fr_1fr_1fr] gap-0 mb-6">
+            <div className="grid grid-cols-[170px_1fr_1fr_1fr] gap-0 mb-6">
               <div />
               {products.map((product) => (
                 <div key={product.id} className="flex flex-col items-center px-2">
                   {product.recommended && (
-                    <span className="mb-2 px-3 py-0.5 rounded-full text-[10px] font-semibold tracking-widest uppercase border border-white/20 text-white/60">
+                    <span className="mb-2 px-3 py-0.5 rounded-full text-[10px] font-medium tracking-widest uppercase border border-white/20 text-white/60">
                       Top
                     </span>
                   )}
-                  <div className="relative w-[100px] h-[120px] mb-3">
+                  <div className="relative w-22.5 h-27.5 mb-3">
                     <Image src={product.image} alt={product.name} fill className="object-contain" />
                   </div>
-                  <p className="text-[16px] font-medium text-center">
-                    <GradientText>FX 321312</GradientText>
+                  <p className="text-[15px] font-semibold text-center">
+                    <GradientText>{product.name}</GradientText>
                   </p>
                 </div>
               ))}
             </div>
 
             <div className="border-t border-[#222]">
-              {[
-                { label: 'FACE ID', values: ['—', '✓', '✓'] },
-                { label: 'HUELLA', values: ['—', '✓', '✓'] },
-                { label: 'BATERÍA', values: ['20h', '40h', '100h'] },
-                { label: 'AGUA', values: ['✓', '✓', '✓'] },
-                { label: 'TARJETAS', values: ['2x', '2x', '4x'] },
-                { label: 'PRECIO', values: ['800K', '1.2M', '1.5M'] },
-              ].map((row, idx) => (
-                <div key={idx} className="grid grid-cols-[150px_1fr_1fr_1fr] border-b border-[#222] hover:bg-white/[0.02] transition-colors">
-                  <div className="py-6 px-2 flex items-center">
-                    <span className="text-white text-[14px] tracking-wider uppercase">{row.label}</span>
+              {rows.map((row) => (
+                <div key={row.key} className="grid grid-cols-[170px_1fr_1fr_1fr] border-b border-[#222] hover:bg-white/2 transition-colors">
+                  <div className="py-5 px-2 flex items-center">
+                    <span className="text-white text-[12px] tracking-wider uppercase">{row.label}</span>
                   </div>
-                  {row.values.map((val, i) => (
+                  {products.map((product) => (
                     <div
-                      key={i}
-                      className={`py-6 px-2 flex items-center justify-center ${
-                        i === 2 ? 'bg-white/[0.05]' : ''
+                      key={product.id}
+                      className={`py-5 px-2 flex items-center justify-center ${
+                        product.recommended ? 'bg-white/5' : ''
                       }`}
                     >
-                      <span className={`text-[16px] font-medium ${val === '—' ? 'text-[#444]' : 'text-[#f2f2f2]'}`}>
-                        {val}
-                      </span>
+                      <CellValue value={product.features[row.key]} />
                     </div>
                   ))}
                 </div>
@@ -332,10 +241,8 @@ export default function ComparisonTable() {
           {products.map((product) => (
             <div
               key={product.id}
-              className={`rounded-2xl p-5 border transition-colors ${
-                product.recommended
-                  ? 'bg-white/[0.07] border-white/20'
-                  : 'bg-[#111] border-[#222]'
+              className={`rounded-2xl p-5 border ${
+                product.recommended ? 'bg-white/[0.07] border-white/20' : 'bg-[#111] border-[#222]'
               }`}
             >
               {product.recommended && (
@@ -346,42 +253,21 @@ export default function ComparisonTable() {
                 </div>
               )}
               <div className="flex items-center gap-4 mb-5 pb-5 border-b border-[#333]">
-                <div className="relative w-[70px] h-[90px]">
+                <div className="relative w-15 h-20">
                   <Image src={product.image} alt={product.name} fill className="object-contain" />
                 </div>
-                <div>
-                  <p className="text-base font-medium">
-                    <GradientText>Cerradura FX 321312</GradientText>
-                  </p>
-                  <p className="text-[#f2f2f2] text-lg font-bold mt-1">{product.precio}</p>
-                </div>
+                <p className="text-lg font-semibold">
+                  <GradientText>{product.name}</GradientText>
+                </p>
               </div>
 
               <div className="space-y-3 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-[#888] uppercase tracking-wide">Face ID</span>
-                  <span className={product.faceId ? 'text-white font-medium' : 'text-[#444]'}>
-                    {product.faceId ? '✓ Incluido' : '—'}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-[#888] uppercase tracking-wide">Huella</span>
-                  <span className={product.huella ? 'text-white font-medium' : 'text-[#444]'}>
-                    {product.huella ? '✓ Incluido' : '—'}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-[#888] uppercase tracking-wide">Batería</span>
-                  <span className="text-[#f2f2f2] font-bold">{product.bateria}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-[#888] uppercase tracking-wide">Resistente al agua</span>
-                  <span className="text-white font-medium">✓ Incluido</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-[#888] uppercase tracking-wide">Tarjetas</span>
-                  <span className="text-[#f2f2f2]">{product.tarjetas}x</span>
-                </div>
+                {rows.map((row) => (
+                  <div key={row.key} className="flex justify-between gap-4">
+                    <span className="text-[#888] uppercase tracking-wide text-xs shrink-0">{row.label}</span>
+                    <CellValue value={product.features[row.key]} />
+                  </div>
+                ))}
               </div>
             </div>
           ))}

@@ -7,113 +7,104 @@ import Navbar from '@/components/shared/Navbar';
 const products = [
   {
     id: '1',
-    handle: 'cerradura-fx-321312',
-    title: 'cerradura-fx-321312',
+    handle: 'serie-s-t',
+    title: 'Serie S | T',
     price: '2,00,300',
     image: '/ProductsImages/iShkelSampleFX 1.png',
+    category: 'Cerraduras eléctricas',
     isNew: true,
     isFeatured: true,
     colors: ['#D9D9D9', '#292929'],
   },
   {
     id: '2',
-    handle: 'fx-2025',
-    title: 'FX 2025',
+    handle: 'serie-x-r',
+    title: 'Serie X | R',
     price: '2,00,300',
     image: '/ProductsImages/iShkelSampleFX 1.png',
+    category: 'Cerraduras eléctricas',
     isNew: true,
     colors: ['#D9D9D9', '#292929'],
   },
   {
     id: '3',
-    handle: 'fx-2024',
-    title: 'FX 2024',
+    handle: 'serie-f-s',
+    title: 'Serie F | S',
     price: '2,00,300',
     image: '/ProductsImages/iShkelSampleFX 1.png',
+    category: 'Cerraduras eléctricas',
     isNew: false,
     colors: ['#D9D9D9', '#292929'],
   },
   {
     id: '4',
-    handle: 'fx-2023',
-    title: 'FX 2023',
+    handle: 'serie-fx-under',
+    title: 'Serie Fx | Under',
     price: '2,00,300',
     image: '/ProductsImages/iShkelSampleFX 1.png',
+    category: 'Cerraduras eléctricas',
     isNew: false,
     colors: ['#D9D9D9', '#292929'],
   },
   {
     id: '5',
-    handle: 'fx-2022',
-    title: 'FX 2022',
+    handle: 'serie-fx-camon',
+    title: 'Serie Fx Camon',
     price: '2,00,300',
     image: '/ProductsImages/iShkelSampleFX 1.png',
+    category: 'Cerraduras eléctricas',
     isNew: false,
     colors: ['#D9D9D9', '#292929'],
   },
   {
     id: '6',
-    handle: 'fx-2021',
-    title: 'FX 2021',
+    handle: 'cerradura-fx-321312',
+    title: 'Cerradura FX 321312',
     price: '2,00,300',
     image: '/ProductsImages/iShkelSampleFX 1.png',
-    isNew: false,
-    colors: ['#D9D9D9', '#292929'],
-  },
-  {
-    id: '7',
-    handle: 'fx-2020',
-    title: 'FX 2020',
-    price: '2,00,300',
-    image: '/ProductsImages/iShkelSampleFX 1.png',
+    category: 'Candados y pestillos',
     isNew: false,
     colors: ['#D9D9D9', '#292929'],
   },
 ];
 
-const ColorSwatches = ({ colors, size = 'small' }: { colors: string[]; size?: 'small' | 'large' }) => {
-  const swatchSize = size === 'large' ? 'w-[25px] h-[25px]' : 'w-[20px] h-[20px]';
-  const innerSize = size === 'large' ? 'w-[18.75px] h-[18.75px]' : 'w-[15px] h-[15px]';
-
-  return (
-    <div className="flex items-center gap-2">
-      {colors.map((color, index) => (
-        <button
-          key={index}
-          className={`${swatchSize} rounded-full border border-[#626262] flex items-center justify-center bg-white`}
-        >
-          <span
-            className={`${innerSize} rounded-full`}
-            style={{ backgroundColor: color }}
-          />
-        </button>
-      ))}
-    </div>
-  );
-};
+const ColorSwatches = ({ colors, large = false }: { colors: string[]; large?: boolean }) => (
+  <div className="flex items-center gap-2">
+    {colors.map((color, index) => (
+      <button
+        key={index}
+        className={`${large ? 'w-6 h-6' : 'w-5 h-5'} rounded-full border border-[#626262] flex items-center justify-center bg-white`}
+      >
+        <span
+          className={`${large ? 'w-4.5 h-4.5' : 'w-3.5 h-3.5'} rounded-full`}
+          style={{ backgroundColor: color }}
+        />
+      </button>
+    ))}
+  </div>
+);
 
 const ProductCard = ({ product }: { product: typeof products[0] }) => (
   <Link href={`/products/${product.handle}`} className="group block">
-    <div className="bg-[#fafafa] rounded-[15px] p-4 relative h-60 flex flex-col">
+    <div className="bg-[#fafafa] rounded-[15px] p-4 relative h-60 flex flex-col overflow-hidden">
       {product.isNew && (
-        <span className="absolute top-3 right-3 bg-white px-3 py-1 rounded-full text-[14px] text-black font-normal z-10">
+        <span className="absolute top-3 right-3 bg-white px-3 py-1 rounded-full text-[13px] text-black font-normal z-10">
           New
         </span>
       )}
-      <div className="relative flex-1 w-full flex items-center justify-center py-4">
+      <div className="relative flex-1 w-full">
         <Image
           src={product.image}
           alt={product.title}
-          width={155}
-          height={157}
-          className="object-contain group-hover:scale-105 transition-transform duration-300"
+          fill
+          quality={95}
+          className="object-contain p-4 group-hover:scale-105 transition-transform duration-300"
+          sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 22vw"
         />
       </div>
-      <div className="flex items-center justify-between pt-2">
-        <span className="text-[#191817] text-[10px] font-normal">
-          COP {product.price}
-        </span>
-        <ColorSwatches colors={product.colors} size="small" />
+      <div className="flex items-center justify-between pt-2 shrink-0">
+        <span className="text-[#191817] text-[11px] font-normal">COP {product.price}</span>
+        <ColorSwatches colors={product.colors} />
       </div>
     </div>
   </Link>
@@ -121,29 +112,29 @@ const ProductCard = ({ product }: { product: typeof products[0] }) => (
 
 const FeaturedProductCard = ({ product }: { product: typeof products[0] }) => (
   <Link href={`/products/${product.handle}`} className="group block h-full">
-    <div className="bg-[#fafafa] rounded-[15px] p-6 relative h-full flex flex-col">
+    <div className="bg-[#fafafa] rounded-[15px] p-6 relative h-full flex flex-col overflow-hidden">
       {product.isNew && (
         <span className="absolute top-4 right-4 bg-white px-4 py-2 rounded-full text-[14px] text-black font-normal z-10">
           New
         </span>
       )}
-      <h3 className="text-[#191817] text-[20px] font-normal tracking-[0.1px] mb-4">
+      <h3 className="text-[#191817] text-[20px] font-normal tracking-[0.1px] mb-4 shrink-0">
         {product.title}
       </h3>
-      <div className="relative flex-1 flex items-center justify-center">
+      <div className="relative flex-1 w-full">
         <Image
           src={product.image}
           alt={product.title}
-          width={339}
-          height={339}
-          className="object-contain group-hover:scale-105 transition-transform duration-300"
+          fill
+          quality={95}
+          className="object-contain p-6 group-hover:scale-105 transition-transform duration-300"
+          sizes="(max-width: 1024px) 100vw, 33vw"
+          priority
         />
       </div>
-      <div className="flex items-center justify-between mt-4">
-        <span className="text-[#191817] text-[11.8px] font-normal">
-          COP {product.price}
-        </span>
-        <ColorSwatches colors={product.colors} size="large" />
+      <div className="flex items-center justify-between mt-4 shrink-0">
+        <span className="text-[#191817] text-[12px] font-normal">COP {product.price}</span>
+        <ColorSwatches colors={product.colors} large />
       </div>
     </div>
   </Link>
@@ -235,11 +226,11 @@ export default function ProductsPage() {
 
       <section className="pt-24 md:pt-28 pb-8 md:pb-12 px-4 md:px-8 lg:px-14">
         <div className="max-w-340 mx-auto">
-          <h1 className="text-[32px] md:text-[42px] font-normal text-[#0e0e0e] tracking-[-0.64px] mb-8 md:mb-10">
+          <h1 className="text-[32px] md:text-[42px] font-medium text-[#0e0e0e] tracking-[-0.64px] mb-8 md:mb-10">
             Cerradura para tu casa
           </h1>
-          <div className="grid grid-cols-1 lg:grid-cols-[439px_1fr] gap-6">
-            <div className="h-124.5">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-4">
+            <div className="h-124">
               <FeaturedProductCard product={featuredProduct} />
             </div>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 auto-rows-[240px]">
@@ -251,17 +242,17 @@ export default function ProductsPage() {
         </div>
       </section>
 
-      <section className="relative w-full h-125 md:h-189.75 overflow-hidden">
+      <section className="relative w-full h-135 md:h-250.75 overflow-hidden">
         <Image
           src="/ProductsImages/hero-image.png"
           alt="Seguridad inteligente para su hogar"
           fill
           className="object-cover object-center"
           sizes="100vw"
-          priority
+          priority 
         />
         <div className="absolute bottom-12 left-8 md:left-16 lg:left-24">
-          <h2 className="text-[#f2f2f2] text-[32px] md:text-[42px] font-normal tracking-[-0.64px] leading-[1.2] max-w-91">
+          <h2 className="text-[#f2f2f2] text-[32px] md:text-[42px] font-medium-light tracking-[-0.64px] leading-[1.2] max-w-130">
             Ingenieria y seguridad biometrica 3d por primera vez en Colombia.
           </h2>
         </div>

@@ -82,13 +82,12 @@ export default function AutoridadSection() {
       <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12 pt-20 sm:pt-24 md:pt-28 lg:pt-32 pb-16 md:pb-20 lg:pb-24">
 
         {/* Header */}
-        <h2 className="text-center text-2xl sm:text-3xl md:text-4xl lg:text-[42px] font-medium mb-10 md:mb-16">
-          <span className="text-white">Soluciones Inteligentes a </span>
+        <h2 className="text-center text-2xl sm:text-3xl md:text-4xl lg:text-[42px] font-medium mb-10 md:mb-16 font-neue">
+          <span className="text-white">Ecosistema </span>
           <span
-            className="bg-clip-text text-transparent font-bold"
+            className="bg-clip-text text-transparent font-medium"
             style={{ backgroundImage: gradientGold }}
-          >
-            tu medida
+          >iShkel
           </span>
         </h2>
 
@@ -107,10 +106,10 @@ export default function AutoridadSection() {
             {/* Gradient overlay */}
             <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/10 to-transparent" />
             <div className="absolute bottom-8 left-8 md:bottom-12 md:left-12">
-              <p className="text-white text-3xl sm:text-4xl md:text-5xl lg:text-[64px] leading-tight tracking-tight">
-                <span className="font-bold">Máxima</span>
+              <p className="text-white text-3xl sm:text-4xl md:text-5xl lg:text-[64px] leading-tight tracking-tight font-neue">
+                <span className="font-medium font-neue">Visita Previa</span>
                 <br />
-                <span className="font-medium">Seguridad</span>
+                <span className="font-bold font-neue">sin costo</span>
               </p>
             </div>
           </div>
@@ -129,10 +128,10 @@ export default function AutoridadSection() {
               />
               <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/10 to-transparent" />
               <div className="absolute bottom-6 left-6 md:bottom-8 md:left-8">
-                <p className="text-white text-2xl sm:text-3xl md:text-4xl lg:text-[48px] leading-tight">
-                  <span className="font-medium">Inicio</span>
+                <p className="text-white text-2xl sm:text-3xl md:text-4xl lg:text-[48px] leading-tight fonmt-neue">
+                  <span className="font-medium">Ecosistema </span>
                   <br />
-                  <span className="font-bold">Seguro</span>
+                  <span className="font-bold">iShkel</span>
                 </p>
               </div>
             </div>
@@ -163,61 +162,56 @@ export default function AutoridadSection() {
         <div className="pt-20 md:pt-20 lg:pt-26 pb-6 md:pb-12 lg:pb-16">
 
           <h3 className="text-center text-xl sm:text-2xl md:text-3xl lg:text-[42px] font-medium mb-12 md:mb-16">
-            <span
-              className="bg-clip-text text-transparent"
-              style={{ backgroundImage: gradientGold }}
-            >
-              La confianza{' '}
-            </span>
-            <span className="text-white">se mide en resultados</span>
+          
+            <span className="text-white">La promesa de iShkel</span>
           </h3>
 
-          <div className="grid grid-cols-3 gap-4 md:gap-12 lg:gap-16 max-w-5xl mx-auto">
+          <div className="grid grid-cols-3 gap-8 md:gap-12 lg:gap-16 max-w-5xl mx-auto">
 
             {/* Stat 1 */}
-            <div className="text-center flex flex-col items-center">
+            <div className="text-center flex flex-col items-center gap-3 md:gap-5">
               <div className="flex items-baseline justify-center">
                 <span className="text-[#888] text-2xl sm:text-4xl md:text-5xl lg:text-[58px] font-bold">+</span>
                 <StatNumber
                   value={1000}
-                  className="text-[#888] text-3xl sm:text-5xl md:text-7xl lg:text-[128px] font-bold leading-none"
+                  className="text-[#888] text-3xl sm:text-5xl md:text-7xl lg:text-[120px] font-bold leading-none"
                 />
               </div>
-              <p className="text-[#f2f2f2] text-xs sm:text-base md:text-xl lg:text-[24px] font-medium mt-2 md:mt-4">
-                Instalaciones Exitosas
+              <p className="text-[#f2f2f2] text-xs sm:text-sm md:text-lg lg:text-[22px] font-medium leading-snug max-w-40 md:max-w-50">
+                Instalaciones exitosas en Bogota y Medellin
               </p>
             </div>
 
-            {/* Stat 2 — center, gradient treatment */}
-            <div className="text-center flex flex-col items-center border-x border-white/10 px-2">
+            {/* Stat 2 */}
+            <div className="text-center flex flex-col items-center gap-3 md:gap-5">
               <div className="flex flex-col items-center">
                 <StatNumber
                   value={20}
-                  className="bg-clip-text text-transparent text-4xl sm:text-6xl md:text-8xl lg:text-[120px] font-bold leading-none"
+                  className="bg-clip-text text-transparent text-3xl sm:text-5xl md:text-7xl lg:text-[120px] font-bold leading-none"
                   style={{ backgroundImage: 'linear-gradient(-1deg, #8C857E 23%, #C4B6A6 36%, #F2F2F2 55%, #C4B6A6 80%, #8C857E 98%)' }}
                 />
                 <span
-                  className="bg-clip-text text-transparent text-2xl sm:text-4xl md:text-6xl lg:text-[80px] font-bold leading-none -mt-1 sm:-mt-3 lg:-mt-6"
+                  className="bg-clip-text text-transparent text-xl sm:text-3xl md:text-5xl lg:text-[72px] font-bold leading-none -mt-1 sm:-mt-2 lg:-mt-4"
                   style={{ backgroundImage: gradientGold }}
                 >
                   Meses
                 </span>
               </div>
-              <p className="text-[#f2f2f2] text-xs sm:text-base md:text-xl lg:text-[24px] font-medium mt-2 md:mt-4">
-                Garantía Extendida
+              <p className="text-[#f2f2f2] text-xs sm:text-sm md:text-lg lg:text-[22px] font-medium leading-snug max-w-40 md:max-w-50">
+                Garantía todo riesgo extendida
               </p>
             </div>
 
             {/* Stat 3 */}
-            <div className="text-center flex flex-col items-center">
+            <div className="text-center flex flex-col items-center gap-3 md:gap-5">
               <div className="flex items-baseline justify-center">
                 <StatNumber
                   value={98}
-                  className="text-[#888] text-3xl sm:text-5xl md:text-7xl lg:text-[128px] font-bold leading-none"
+                  className="text-[#888] text-3xl sm:text-5xl md:text-7xl lg:text-[120px] font-bold leading-none"
                 />
                 <span className="text-[#888] text-xl sm:text-3xl md:text-4xl lg:text-[58px] font-bold">%</span>
               </div>
-              <p className="text-[#f2f2f2] text-xs sm:text-base md:text-xl lg:text-[24px] font-medium mt-2 md:mt-4">
+              <p className="text-[#f2f2f2] text-xs sm:text-sm md:text-lg lg:text-[22px] font-medium leading-snug max-w-40 md:max-w-50">
                 Clientes Satisfechos
               </p>
             </div>
