@@ -1,72 +1,48 @@
-'use client';
-
 import Image from 'next/image';
 import Link from 'next/link';
 import Navbar from '@/components/shared/Navbar';
+import { getAllProducts, ShopifyListProduct } from '@/lib/shopify';
+import Footer from '@/components/shared/Footer';
+import ScrollReveal from '@/components/shared/ScrollReveal';
 
-const products = [
-  {
-    id: '1',
-    handle: 'serie-s-t',
-    title: 'Serie S | T',
-    price: '2,00,300',
-    image: '/ProductsImages/iShkelSampleFX 1.png',
-    category: 'Cerraduras eléctricas',
-    isNew: true,
-    isFeatured: true,
-    colors: ['#D9D9D9', '#292929'],
-  },
-  {
-    id: '2',
-    handle: 'serie-x-r',
-    title: 'Serie X | R',
-    price: '2,00,300',
-    image: '/ProductsImages/iShkelSampleFX 1.png',
-    category: 'Cerraduras eléctricas',
-    isNew: true,
-    colors: ['#D9D9D9', '#292929'],
-  },
-  {
-    id: '3',
-    handle: 'serie-f-s',
-    title: 'Serie F | S',
-    price: '2,00,300',
-    image: '/ProductsImages/iShkelSampleFX 1.png',
-    category: 'Cerraduras eléctricas',
-    isNew: false,
-    colors: ['#D9D9D9', '#292929'],
-  },
-  {
-    id: '4',
-    handle: 'serie-fx-under',
-    title: 'Serie Fx | Under',
-    price: '2,00,300',
-    image: '/ProductsImages/iShkelSampleFX 1.png',
-    category: 'Cerraduras eléctricas',
-    isNew: false,
-    colors: ['#D9D9D9', '#292929'],
-  },
-  {
-    id: '5',
-    handle: 'serie-fx-camon',
-    title: 'Serie Fx Camon',
-    price: '2,00,300',
-    image: '/ProductsImages/iShkelSampleFX 1.png',
-    category: 'Cerraduras eléctricas',
-    isNew: false,
-    colors: ['#D9D9D9', '#292929'],
-  },
-  {
-    id: '6',
-    handle: 'cerradura-fx-321312',
-    title: 'Cerradura FX 321312',
-    price: '2,00,300',
-    image: '/ProductsImages/iShkelSampleFX 1.png',
-    category: 'Candados y pestillos',
-    isNew: false,
-    colors: ['#D9D9D9', '#292929'],
-  },
-];
+const SPANISH_COLOR_MAP: Record<string, string> = {
+  'negro': '#292929',
+  'negro azabache': '#292929',
+  'blanco': '#f5f5f5',
+  'plata': '#C0C0C0',
+  'plateado': '#C0C0C0',
+  'dorado': '#D4AF37',
+  'gris': '#888888',
+  'rojo': '#CC0000',
+  'azul': '#1E3A8A',
+  'bronce': '#CD7F32',
+};
+
+function colorNameToHex(name: string): string {
+  return SPANISH_COLOR_MAP[name.toLowerCase()] ?? '#D9D9D9';
+}
+
+function formatCOP(amount: string): string {
+  return new Intl.NumberFormat('es-CO', { maximumFractionDigits: 0 }).format(
+    parseFloat(amount)
+  );
+}
+
+function getProductColors(product: ShopifyListProduct): string[] {
+  const colorOption = product.options.find(
+    (o) => o.name.toLowerCase() === 'color'
+  );
+  if (!colorOption || colorOption.values.length === 0) return ['#D9D9D9', '#292929'];
+  return colorOption.values.map(colorNameToHex);
+}
+
+function getProductImage(product: ShopifyListProduct): string {
+  return (
+    product.featuredImage?.url ??
+    product.images.nodes[0]?.url ??
+    '/ProductsImages/iShkelSampleFX 1.png'
+  );
+}
 
 const ColorSwatches = ({ colors, large = false }: { colors: string[]; large?: boolean }) => (
   <div className="flex items-center gap-2">
@@ -84,25 +60,65 @@ const ColorSwatches = ({ colors, large = false }: { colors: string[]; large?: bo
   </div>
 );
 
-const ProductCard = ({ product }: { product: typeof products[0] }) => (
+const TAG_STYLES: Record<string, string> = {
+  'new':         'bg-white text-black',
+  'nuevo':       'bg-white text-black',
+  'novedad':     'bg-white text-black',
+  'sale':        'bg-red-500 text-white',
+  'oferta':      'bg-red-500 text-white',
+  'descuento':   'bg-red-500 text-white',
+  'best seller': 'bg-[#191817] text-white',
+  'best-seller': 'bg-[#191817] text-white',
+  'más vendido': 'bg-[#191817] text-white',
+  'featured':    'bg-[#191817] text-white',
+  'destacado':   'bg-[#191817] text-white',
+  'limited':     'bg-amber-500 text-white',
+  'limitado':    'bg-amber-500 text-white',
+};
+
+function tagStyle(tag: string): string {
+  return TAG_STYLES[tag.toLowerCase()] ?? 'bg-white/90 text-black';
+}
+
+const TagBadges = ({ tags, small = false }: { tags: string[]; small?: boolean }) => (
+  <>
+    {tags.map((tag) => (
+      <span
+        key={tag}
+        className={`${small ? 'px-2.5 py-0.5 text-[11px]' : 'px-3.5 py-1 text-[13px]'} rounded-full font-normal leading-none ${tagStyle(tag)}`}
+      >
+        {tag}
+      </span>
+    ))}
+  </>
+);
+
+type CardProduct = {
+  handle: string;
+  title: string;
+  price: string;
+  image: string;
+  tags: string[];
+  colors: string[];
+};
+
+const ProductCard = ({ product }: { product: CardProduct }) => (
   <Link href={`/products/${product.handle}`} className="group block">
-    <div className="bg-[#fafafa] rounded-[15px] p-4 relative h-60 flex flex-col overflow-hidden">
-      {product.isNew && (
-        <span className="absolute top-3 right-3 bg-white px-3 py-1 rounded-full text-[13px] text-black font-normal z-10">
-          New
-        </span>
-      )}
+    <div className="bg-[#fafafa] rounded-[15px] relative h-60 flex flex-col overflow-hidden">
+      <div className="absolute top-4 right-4 z-10 flex flex-col items-end gap-1.5">
+        <TagBadges tags={product.tags} small />
+      </div>
       <div className="relative flex-1 w-full">
         <Image
           src={product.image}
           alt={product.title}
           fill
           quality={95}
-          className="object-contain p-4 group-hover:scale-105 transition-transform duration-300"
+          className="object-cover group-hover:scale-105 transition-transform duration-300"
           sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 22vw"
         />
       </div>
-      <div className="flex items-center justify-between pt-2 shrink-0">
+      <div className="flex items-center justify-between px-4 py-3.5 shrink-0 bg-[#fafafa]">
         <span className="text-[#191817] text-[11px] font-normal">COP {product.price}</span>
         <ColorSwatches colors={product.colors} />
       </div>
@@ -110,29 +126,29 @@ const ProductCard = ({ product }: { product: typeof products[0] }) => (
   </Link>
 );
 
-const FeaturedProductCard = ({ product }: { product: typeof products[0] }) => (
+const FeaturedProductCard = ({ product }: { product: CardProduct }) => (
   <Link href={`/products/${product.handle}`} className="group block h-full">
-    <div className="bg-[#fafafa] rounded-[15px] p-6 relative h-full flex flex-col overflow-hidden">
-      {product.isNew && (
-        <span className="absolute top-4 right-4 bg-white px-4 py-2 rounded-full text-[14px] text-black font-normal z-10">
-          New
-        </span>
-      )}
-      <h3 className="text-[#191817] text-[20px] font-normal tracking-[0.1px] mb-4 shrink-0">
-        {product.title}
-      </h3>
-      <div className="relative flex-1 w-full">
+    <div className="bg-[#fafafa] rounded-[15px] relative h-full flex flex-col overflow-hidden">
+      <div className="absolute top-4 right-4 z-10 flex flex-col items-end gap-1.5">
+        <TagBadges tags={product.tags} />
+      </div>
+      <div className="px-5 pt-5 shrink-0">
+        <h3 className="text-[#191817] text-[20px] font-normal tracking-[0.1px]">
+          {product.title}
+        </h3>
+      </div>
+      <div className="relative flex-1 w-full mt-4">
         <Image
           src={product.image}
           alt={product.title}
           fill
           quality={95}
-          className="object-contain p-6 group-hover:scale-105 transition-transform duration-300"
+          className="object-cover group-hover:scale-105 transition-transform duration-300"
           sizes="(max-width: 1024px) 100vw, 33vw"
           priority
         />
       </div>
-      <div className="flex items-center justify-between mt-4 shrink-0">
+      <div className="flex items-center justify-between px-5 py-4 shrink-0 bg-[#fafafa]">
         <span className="text-[#191817] text-[12px] font-normal">COP {product.price}</span>
         <ColorSwatches colors={product.colors} large />
       </div>
@@ -169,56 +185,22 @@ const NewsletterSection = () => (
   </section>
 );
 
-const ProductsFooter = () => (
-  <footer className="bg-black py-12 md:py-16 px-4 md:px-8 lg:px-12">
-    <div className="max-w-340 mx-auto">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[1fr_auto] gap-12">
-        <div className="max-w-88.25">
-          <h3 className="text-white text-[22.6px] font-light tracking-[-1.56px] mb-4">
-            iShkel
-          </h3>
-          <p className="text-white/70 text-[16px] leading-6 tracking-[-0.64px] mb-6">
-            Especialistas en cerraduras inteligentes premium con instalación certificada en puertas tradicionales y de alta seguridad. Líder en Colombia desde 2018.
-          </p>
-          <p className="text-white/70 text-[16px] tracking-[-0.64px]">
-            © 2026 iShkel, Created by Diego
-          </p>
-        </div>
-        <div className="flex gap-12 md:gap-16 lg:gap-20">
-          <div>
-            <h4 className="text-white text-[16px] font-medium tracking-[-0.64px] mb-4">Pages</h4>
-            <ul className="space-y-3">
-              <li><Link href="/blog" className="text-white/70 text-[16px] tracking-[-0.64px] hover:text-white transition-colors">Blog</Link></li>
-              <li><Link href="/works" className="text-white/70 text-[16px] tracking-[-0.64px] hover:text-white transition-colors">Works</Link></li>
-              <li><Link href="/contact" className="text-white/70 text-[16px] tracking-[-0.64px] hover:text-white transition-colors">Contact</Link></li>
-              <li><Link href="/404" className="text-white/70 text-[16px] tracking-[-0.64px] hover:text-white transition-colors">404</Link></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="text-white text-[16px] font-medium tracking-[-0.64px] mb-4">Info</h4>
-            <ul className="space-y-3">
-              <li><Link href="/terminos" className="text-white/70 text-[16px] tracking-[-0.64px] hover:text-white transition-colors">Termino</Link></li>
-              <li><Link href="/privacidad" className="text-white/70 text-[16px] tracking-[-0.64px] hover:text-white transition-colors">Privacidad</Link></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="text-white text-[16px] font-medium tracking-[-0.64px] mb-4">Sociales</h4>
-            <ul className="space-y-3">
-              <li><a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-white/70 text-[16px] tracking-[-0.64px] hover:text-white transition-colors">Instagram</a></li>
-              <li><a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="text-white/70 text-[16px] tracking-[-0.64px] hover:text-white transition-colors">YouTube</a></li>
-              <li><a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-white/70 text-[16px] tracking-[-0.64px] hover:text-white transition-colors">Facebook</a></li>
-              <li><a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" className="text-white/70 text-[16px] tracking-[-0.64px] hover:text-white transition-colors">TikTok</a></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-  </footer>
-);
 
-export default function ProductsPage() {
-  const featuredProduct = products.find((p) => p.isFeatured) || products[0];
-  const gridProducts = products.filter((p) => !p.isFeatured);
+
+export default async function ProductsPage() {
+  const shopifyProducts = await getAllProducts();
+
+  const products: CardProduct[] = shopifyProducts.map((p) => ({
+    handle: p.handle,
+    title: p.title,
+    price: formatCOP(p.priceRange.minVariantPrice.amount),
+    image: getProductImage(p),
+    tags: p.tags,
+    colors: getProductColors(p),
+  }));
+
+  const featuredProduct = products[0];
+  const gridProducts = products.slice(1);
 
   return (
     <main className="min-h-screen bg-white font-neue">
@@ -226,19 +208,25 @@ export default function ProductsPage() {
 
       <section className="pt-24 md:pt-28 pb-8 md:pb-12 px-4 md:px-8 lg:px-14">
         <div className="max-w-340 mx-auto">
-          <h1 className="text-[32px] md:text-[42px] font-medium text-[#0e0e0e] tracking-[-0.64px] mb-8 md:mb-10">
-            Cerradura para tu casa
-          </h1>
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-4">
-            <div className="h-124">
-              <FeaturedProductCard product={featuredProduct} />
+          <ScrollReveal direction="up" duration={0.7} distance={28}>
+            <h1 className="text-[32px] md:text-[42px] font-medium text-[#0e0e0e] tracking-[-0.64px] mb-10 md:mb-12">
+              Cerradura para tu casa
+            </h1>
+          </ScrollReveal>
+          {featuredProduct && (
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-6">
+              <ScrollReveal direction="up" distance={32} duration={0.9} className="h-124">
+                <FeaturedProductCard product={featuredProduct} />
+              </ScrollReveal>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-6 auto-rows-[240px]">
+                {gridProducts.slice(0, 6).map((product, i) => (
+                  <ScrollReveal key={product.handle} direction="up" distance={24} duration={0.7} delay={i * 0.08}>
+                    <ProductCard product={product} />
+                  </ScrollReveal>
+                ))}
+              </div>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 auto-rows-[240px]">
-              {gridProducts.slice(0, 6).map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
-          </div>
+          )}
         </div>
       </section>
 
@@ -249,17 +237,19 @@ export default function ProductsPage() {
           fill
           className="object-cover object-center"
           sizes="100vw"
-          priority 
+          priority
         />
         <div className="absolute bottom-12 left-8 md:left-16 lg:left-24">
-          <h2 className="text-[#f2f2f2] text-[32px] md:text-[42px] font-medium-light tracking-[-0.64px] leading-[1.2] max-w-130">
-            Ingenieria y seguridad biometrica 3d por primera vez en Colombia.
-          </h2>
+          <ScrollReveal direction="up" distance={32} duration={1} start="top 90%">
+            <h2 className="text-[#f2f2f2] text-[32px] md:text-[42px] font-medium-light tracking-[-0.64px] leading-[1.2] max-w-130">
+              Ingenieria y seguridad biometrica 3d por primera vez en Colombia.
+            </h2>
+          </ScrollReveal>
         </div>
       </section>
 
       <NewsletterSection />
-      <ProductsFooter />
+      <Footer/>
     </main>
   );
 }

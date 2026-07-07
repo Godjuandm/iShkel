@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 
 const gradientGold = 'linear-gradient(180deg, #8C857E 0%, #C4B6A6 25%, #F2F2F2 50%, #C4B6A6 75%, #8C857E 100%)';
@@ -106,10 +107,10 @@ export default function AutoridadSection() {
             {/* Gradient overlay */}
             <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/10 to-transparent" />
             <div className="absolute bottom-8 left-8 md:bottom-12 md:left-12">
-              <p className="text-white text-3xl sm:text-4xl md:text-5xl lg:text-[64px] leading-tight tracking-tight font-neue">
-                <span className="font-medium font-neue">Visita Previa</span>
+              <p className="text-white text-3xl sm:text-4xl md:text-5xl lg:text-[45px] leading-tight tracking-tight font-neue">
+                <span className="font-medium font-neue">¿Estas en Bogota?</span>
                 <br />
-                <span className="font-bold font-neue">sin costo</span>
+                <span className="font-bold font-neue">Visita previa sin costo!</span>
               </p>
             </div>
           </div>
@@ -118,7 +119,10 @@ export default function AutoridadSection() {
           <div className="flex flex-col gap-4 md:gap-5 lg:gap-6">
 
             {/* Top Right */}
-            <div className="relative h-[250px] sm:h-[300px] md:h-[350px] lg:h-[384px] rounded-[20px] overflow-hidden group">
+            <Link
+              href="/pro"
+              className="relative h-[250px] sm:h-[300px] md:h-[350px] lg:h-[384px] rounded-[20px] overflow-hidden group block"
+            >
               <Image
                 src="/Images_Icons/Autoridad-InicioSeguro.png"
                 alt="iShkel smart lock - Inicio Seguro"
@@ -128,13 +132,13 @@ export default function AutoridadSection() {
               />
               <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/10 to-transparent" />
               <div className="absolute bottom-6 left-6 md:bottom-8 md:left-8">
-                <p className="text-white text-2xl sm:text-3xl md:text-4xl lg:text-[48px] leading-tight fonmt-neue">
-                  <span className="font-medium">Ecosistema </span>
+                <p className="text-white text-2xl sm:text-3xl md:text-4xl lg:text-[45px] leading-tight fonmt-neue">
+                  <span className="font-medium">¿Distribuidor o</span>
                   <br />
-                  <span className="font-bold">iShkel</span>
+                  <span className="font-bold">Constructor?</span>
                 </p>
               </div>
-            </div>
+            </Link>
 
             {/* Bottom Right */}
             <div className="relative h-[250px] sm:h-[300px] md:h-[400px] lg:h-130 rounded-[20px] overflow-hidden group">

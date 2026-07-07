@@ -64,7 +64,7 @@ export default function Hero() {
             </a>
             <a
               href="#saber-mas"
-              className="border-2 border-[#f2f2f2] text-white font-neue font-normal text-[18px] sm:text-[20px] rounded-[15px] hover:bg-white/5 transition-all duration-300 w-full sm:w-50 h-12 flex items-center justify-center"
+              className="border-2 border-[#f2f2f2] text-white font-neue font-normal text-[15px] sm:text-[15px] rounded-[15px] hover:bg-white/5 transition-all duration-300 w-full sm:w-50 h-12 flex items-center justify-center"
             >
               Visita previa sin costo 
             </a>

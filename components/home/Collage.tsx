@@ -1,5 +1,9 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 
 interface Product {
   id: number;
@@ -20,16 +24,36 @@ const products: Product[] = [
 ];
 
 export default function CollageSection() {
+  const sectionRef = useRef<HTMLElement>(null);
+
   const column1 = [products[0], products[3]];
   const column2 = [products[1], products[4]];
   const column3 = [products[2], products[5]];
 
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start end', 'end start'],
+  });
+
+  // Parallax transforms — negative = upward, positive = downward.
+  const y1 = useTransform(scrollYProgress, [0, 1], [80, -120]);
+  const y2 = useTransform(scrollYProgress, [0, 1], [-40, 60]);
+  const y3 = useTransform(scrollYProgress, [0, 1], [140, -180]);
+
+  const entranceTransition = { duration: 0.8, ease: [0.22, 1, 0.36, 1] as const };
+
   return (
-    <section className="w-full bg-[#F3F3F3] py-16 md:py-24">
+    <section ref={sectionRef} className="w-full bg-[#F3F3F3] py-16 md:py-24 overflow-hidden">
       <div className="max-w-[1440px] mx-auto px-4">
 
         {/* Header */}
-        <div className="text-center mb-12 md:mb-14">
+        <motion.div
+          className="text-center mb-12 md:mb-14"
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={entranceTransition}
+        >
           <h2 className="text-3xl md:text-4xl font-neue font-medium text-[#1a1a1a] mt-3 mb-4 leading-tight">
             Projectos{' '}
             <span
@@ -45,33 +69,39 @@ export default function CollageSection() {
             Somos la elección predilecta en Bogotá, Medellín, y el eje Cafetero 
             para quienes buscan reemplazar sus chapas tradicionales por la tecnologia de iShkel elegancia y control total.
           </p>
-        </div>
+        </motion.div>
 
         {/* Masonry columns — desktop: 3 cols, mobile: 2 cols */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-5 items-start">
+        <motion.div
+          className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-5 items-start"
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ ...entranceTransition, delay: 0.1 }}
+        >
 
-          {/* Column 1 — offset down */}
-          <div className="flex flex-col gap-4 md:gap-5 mt-20 md:mt-42">
+          {/* Column 1 — offset down, moves upward */}
+          <motion.div className="flex flex-col gap-4 md:gap-5 mt-20 md:mt-42 will-change-transform" style={{ y: y1 }}>
             {column1.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
-          </div>
+          </motion.div>
 
-          {/* Column 2 — starts at top */}
-          <div className="flex flex-col gap-4 md:gap-5">
+          {/* Column 2 — starts at top, moves downward */}
+          <motion.div className="flex flex-col gap-4 md:gap-5 will-change-transform" style={{ y: y2 }}>
             {column2.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
-          </div>
+          </motion.div>
 
-          {/* Column 3 — offset down (hidden on mobile, merged into 2-col grid) */}
-          <div className="hidden md:flex flex-col gap-5 mt-42">
+          {/* Column 3 — offset down (hidden on mobile), moves upward */}
+          <motion.div className="hidden md:flex flex-col gap-5 mt-42 will-change-transform" style={{ y: y3 }}>
             {column3.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
-          </div>
+          </motion.div>
 
-        </div>
+        </motion.div>
       </div>
     </section>
   );
@@ -80,7 +110,7 @@ export default function CollageSection() {
 function ProductCard({ product }: { product: Product }) {
   return (
     <div
-      className="relative group overflow-hidden bg-[#e0e0e0] rounded-[15px]"
+      className="relative group overflow-hidden bg-[#e0e0e0] rounded-[15px] shadow-sm transition-shadow duration-500 hover:shadow-2xl"
       style={{ aspectRatio: `${product.width} / ${product.height}` }}
     >
       <Image
@@ -88,7 +118,7 @@ function ProductCard({ product }: { product: Product }) {
         alt={product.alt}
         width={product.width}
         height={product.height}
-        className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+        className="w-full h-full object-cover transition-all duration-700 ease-out group-hover:scale-105 group-hover:brightness-110"
       />
 
       {/* Gradient overlay — fades in on hover */}

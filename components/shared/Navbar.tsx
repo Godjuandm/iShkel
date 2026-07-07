@@ -127,15 +127,7 @@ export default function Navbar({ dark = false }: { dark?: boolean }) {
           {/* Right Side — desktop icons + mobile cart/menu */}
           <div className="flex items-center gap-4 sm:gap-5 lg:gap-6 pt-2">
             {/* Account — desktop only */}
-            <button className="hidden lg:block transition-opacity duration-300 hover:opacity-60">
-              <Image
-                src="/Images_Icons/account_icon.svg"
-                alt="Account Icon"
-                width={32}
-                height={32}
-                className={`transition-all duration-500 ${lightText ? 'invert' : 'opacity-70'}`}
-              />
-            </button>
+            
 
             {/* Cart — visible on all screen sizes */}
             <button
