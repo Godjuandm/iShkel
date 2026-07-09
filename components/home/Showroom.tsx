@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { useMemo, useState } from 'react';
 import ProductDescription from '@/components/shared/ProductDescription';
+import ProductImageCarousel from '@/components/shared/ProductImageCarousel';
 
 type SelectedOption = { name: string; value: string };
 
@@ -91,10 +92,6 @@ const activeVariant = useMemo(() => {
   const variantId = activeVariant?.id;
   const isOutOfStock = activeVariant && !activeVariant.availableForSale;
 
-  const nextImage = () => setCurrentImage((prev) => (prev + 1) % images.length);
-  const prevImage = () =>
-    setCurrentImage((prev) => (prev - 1 + images.length) % images.length);
-
   const handleBuyNow = async () => {
     if (!variantId) {
       window.location.href = `https://ishkel.myshopify.com/products/${product.handle}`;
@@ -151,57 +148,15 @@ const activeVariant = useMemo(() => {
       <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-16">
         <div className="flex flex-col lg:flex-row items-start gap-0">
           {/* Left - Carousel */}
-          <div className="w-full lg:w-[58%] relative">
-            <div className="relative rounded-[15px] overflow-hidden bg-white aspect-4/5 lg:aspect-776/805 w-full mt-0 lg:mt-12">
-              {images.map((image, i) => (
-                  <Image
-                    key={image.url}
-                    src={image.url}
-                    alt={image.altText || `${product.title} - imagen ${i + 1}`}
-                    fill
-                    className={`object-cover transition-opacity duration-500 ease-out ${
-                      i === currentImage ? 'opacity-100 z-10' : 'opacity-0 z-0'
-                    }`}
-                    priority={i === 0}
-                    sizes="(max-width: 1024px) 100vw, 60vw"
-                  />
-                ))}
-              <button
-                onClick={prevImage}
-                aria-label="Imagen anterior"
-                className="absolute left-4 top-1/2 -translate-y-1/2 w-[45px] h-[45px] z-20 bg-white rounded-full flex items-center justify-center shadow-md hover:scale-105 transition-transform duration-200"
-              >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#191817" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M15 18l-6-6 6-6" />
-                </svg>
-              </button>
-
-              <button
-                onClick={nextImage}
-                aria-label="Imagen siguiente"
-                className="absolute right-4 top-1/2 -translate-y-1/2 w-[45px] h-[45px] z-20 bg-white rounded-full flex items-center justify-center shadow-md hover:scale-105 transition-transform duration-200"
-              >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#191817" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M9 18l6-6-6-6" />
-                </svg>
-              </button>
-
-              <div className="absolute bottom-6 left-6 z-20 flex items-center gap-2">
-                {images.map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setCurrentImage(i)}
-                    aria-label={`Ir a imagen ${i + 1}`}
-                    className={`rounded-full transition-all duration-300 ${
-                      i === currentImage
-                        ? 'w-[8px] h-[8px] bg-[#191817]'
-                        : 'w-[4px] h-[4px] bg-[#8c8c8c]'
-                    }`}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
+          <ProductImageCarousel
+            images={images}
+            title={product.title}
+            activeIndex={currentImage}
+            onIndexChange={setCurrentImage}
+            variant="inline"
+            className="w-full lg:w-[58%] relative mt-0 lg:mt-12"
+            priority
+          />
 
           {/* Right - Info */}
           <div className="w-full lg:w-[42%] lg:pl-[80px] flex flex-col justify-center py-10 lg:py-16">
@@ -374,7 +329,7 @@ const activeVariant = useMemo(() => {
             <button
               onClick={handleBuyNow}
               disabled={isLoading || isOutOfStock}
-              className="w-full h-[48px] rounded-[15px] border-2 border-[#191817] flex items-center justify-center hover:bg-[#191817] hover:text-white transition-all duration-300 group disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full h-[48px] rounded-[15px] border-2 border-[#191817] flex items-center justify-center hover:bg-[#191817] hover:text-white active:scale-[0.99] transition-all duration-300 group disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <span className="font-neue font-medium text-[14.5px] text-[#191817] tracking-[0.1px] group-hover:text-white transition-colors duration-300">
                 {isLoading ? 'Cargando...' : 'Comprar ahora'}
@@ -384,7 +339,7 @@ const activeVariant = useMemo(() => {
             <button
               onClick={handleAddToCart}
               disabled={isAddingToCart || isOutOfStock}
-              className="relative mt-3 w-full h-[48px] group cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              className="relative mt-3 w-full h-[48px] group cursor-pointer active:scale-[0.99] transition-transform duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <div className="absolute inset-0 rounded-[15px] bg-gradient-to-r from-[#3b3b3b] to-[#a1a1a1] blur-[2px] opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
               <div className="relative rounded-[15px] bg-gradient-to-r from-[#3b3b3b] to-[#a1a1a1] p-[2px] w-full h-[48px]">

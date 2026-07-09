@@ -47,6 +47,17 @@ export default function ScrollReveal({
     const wrapper = ref.current;
     if (!wrapper) return;
 
+    // Respect prefers-reduced-motion: skip ScrollTrigger entirely and show
+    // the final state immediately instead of animating in.
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      gsap.set(stagger > 0 ? Array.from(wrapper.children) : wrapper, {
+        opacity: 1,
+        x: 0,
+        y: 0,
+      });
+      return;
+    }
+
     // fromVars: initial hidden state
     const fromVars: gsap.TweenVars = {
       opacity: 0,

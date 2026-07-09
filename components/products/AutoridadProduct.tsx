@@ -1,8 +1,17 @@
 // components/products/AutoridadSection.tsx
+
 'use client';
 
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
+import {
+  motion,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+  useMotionTemplate,
+  MotionValue,
+} from 'framer-motion';
 
 const FEATURES = [
   {
@@ -31,9 +40,79 @@ const FEATURES = [
   },
 ];
 
+type StackCardProps = {
+  feature: (typeof FEATURES)[number];
+  i: number;
+  total: number;
+  progress: MotionValue<number>;
+  reducedMotion: boolean;
+  setRef: (el: HTMLDivElement | null) => void;
+};
+
+function StackCard({ feature, i, total, progress, reducedMotion, setRef }: StackCardProps) {
+  // Each covered card shrinks a bit more the deeper it sits in the stack.
+  // The last card is never covered, so its targetScale is 1.
+  const targetScale = 1 - (total - 1 - i) * 0.05;
+
+  // Card i starts shrinking once card i+1 begins arriving (i / total of the
+  // section's scroll), and reaches targetScale by the end of the section.
+  const scale = useTransform(progress, [i / total, 1], [1, targetScale]);
+  const brightness = useTransform(progress, [i / total, 1], [1, 0.7]);
+  const filter = useMotionTemplate`brightness(${brightness})`;
+
+  return (
+    <div
+      ref={setRef}
+      // Sticky lives on this plain wrapper — the scale below never
+      // interferes with the pinned position
+      className="sticky pt-4 lg:pt-6"
+      style={{
+        top: `calc(8rem + ${i * 1.5}rem)`, // 128px + (24px × index)
+      }}
+    >
+      <motion.div
+        className="bg-[#191817] rounded-[15px] p-4 lg:p-5 shadow-[0_-20px_40px_-20px_rgba(0,0,0,0.6)]"
+        style={
+          reducedMotion
+            ? { transformOrigin: 'top center' }
+            : { scale, filter, transformOrigin: 'top center' }
+        }
+      >
+        <div className="relative aspect-[560/310] w-full rounded-[10px] overflow-hidden bg-[#d9d9d9]">
+          <Image
+            src={feature.image}
+            alt={feature.alt}
+            fill
+            className="object-cover"
+            sizes="(max-width: 1024px) 100vw, 50vw"
+          />
+        </div>
+
+        <div className="mt-4 lg:mt-5 px-1 flex items-baseline gap-3">
+          <span className="text-white text-[18px] sm:text-[20px] lg:text-[22px] font-medium font-neue tabular-nums">
+            {feature.id}
+          </span>
+          <h3 className="text-white text-[18px] sm:text-[20px] lg:text-[24px] font-medium font-neue tracking-tight">
+            {feature.title}
+          </h3>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
 export default function AutoridadSection() {
   const [activeIndex, setActiveIndex] = useState(0);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const stackRef = useRef<HTMLDivElement | null>(null);
+  const prefersReducedMotion = useReducedMotion();
+
+  // Scroll progress across the whole card stack — drives the continuous
+  // scale/dim of covered cards
+  const { scrollYProgress } = useScroll({
+    target: stackRef,
+    offset: ['start start', 'end end'],
+  });
 
   // Track which card is currently "on top" — drives left-column indicator
   useEffect(() => {
@@ -59,106 +138,78 @@ export default function AutoridadSection() {
   }, []);
 
   return (
-    <section className="relative bg-[#0e0e0e] text-white overflow-hidden">
+    <section className="relative bg-[#0e0e0e] text-white overflow-x-clip">
       <div className="max-w-[1440px] mx-auto px-5 sm:px-8 lg:px-20 py-16 sm:py-20 lg:py-28">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.1fr] gap-10 lg:gap-20">
-        {/* LEFT — Animates down as user scrolls through the section */}
-<div className="lg:sticky lg:top-0 lg:self-start lg:h-screen lg:flex lg:items-start lg:pt-32">
-  <div className="scroll-anim-heading">
-    <h2
-      className="text-[34px] sm:text-[44px] lg:text-[56px] xl:text-[64px] font-medium font-neue tracking-[-0.02em] leading-[1.05]"
-      style={{ textWrap: 'balance' } as React.CSSProperties}
-    >
-      Expertos en seguridad en Colombia
-    </h2>
-    <p
-      className="mt-4 lg:mt-6 text-white/70 text-[16px] sm:text-[20px] lg:text-[24px] font-neue leading-[1.4] max-w-[480px]"
-      style={{ textWrap: 'balance' } as React.CSSProperties}
-    >
-      Expertos en seguridad en Colombia
-    </p>
+          {/* LEFT — Animates down as user scrolls through the section */}
+          <div className="lg:sticky lg:top-0 lg:self-start lg:h-screen lg:flex lg:items-start lg:pt-32">
+            <div className="scroll-anim-heading">
+              <h2
+                className="text-[34px] sm:text-[44px] lg:text-[56px] xl:text-[64px] font-medium font-neue tracking-[-0.02em] leading-[1.05]"
+                style={{ textWrap: 'balance' } as React.CSSProperties}
+              >
+                Expertos en seguridad en Colombia
+              </h2>
+              <p
+                className="mt-4 lg:mt-6 text-white/70 text-[16px] sm:text-[20px] lg:text-[24px] font-neue leading-[1.4] max-w-[480px]"
+                style={{ textWrap: 'balance' } as React.CSSProperties}
+              >
+                {/* TODO: replace with real subtext — currently duplicates the H2 */}
+                Expertos en seguridad en Colombia
+              </p>
 
-    <div className="hidden lg:flex items-center gap-3 mt-10">
-      {FEATURES.map((_, i) => (
-        <span
-          key={i}
-          className={`h-[2px] rounded-full transition-all duration-500 ease-out ${
-            i === activeIndex ? 'w-12 bg-white' : 'w-6 bg-white/25'
-          }`}
-        />
-      ))}
-    </div>
-  </div>
+              <div className="hidden lg:flex items-center gap-3 mt-10">
+                {FEATURES.map((_, i) => (
+                  <span
+                    key={i}
+                    className={`h-[2px] rounded-full transition-all duration-500 ease-out ${
+                      i === activeIndex ? 'w-12 bg-white' : 'w-6 bg-white/25'
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
 
-  <style jsx>{`
-    @media (min-width: 1024px) {
-      .scroll-anim-heading {
-        animation: slideDown linear both;
-        animation-timeline: scroll(root);
-        animation-range: 0 100vh;
-      }
+            <style jsx>{`
+              @media (min-width: 1024px) {
+                .scroll-anim-heading {
+                  animation: slideDown linear both;
+                  animation-timeline: scroll(root);
+                  animation-range: 0 100vh;
+                }
 
-      @keyframes slideDown {
-        from {
-          transform: translateY(0);
-        }
-        to {
-          transform: translateY(40vh);
-        }
-      }
-    }
+                @keyframes slideDown {
+                  from {
+                    transform: translateY(0);
+                  }
+                  to {
+                    transform: translateY(40vh);
+                  }
+                }
+              }
 
-    @media (prefers-reduced-motion: reduce) {
-      .scroll-anim-heading {
-        animation: none !important;
-      }
-    }
-  `}</style>
-</div>
+              @media (prefers-reduced-motion: reduce) {
+                .scroll-anim-heading {
+                  animation: none !important;
+                }
+              }
+            `}</style>
+          </div>
 
           {/* RIGHT — Stacking cards */}
-          <div className="flex flex-col">
+          <div ref={stackRef} className="flex flex-col">
             {FEATURES.map((feature, i) => (
-              <div
+              <StackCard
                 key={feature.id}
-                ref={(el) => {
+                feature={feature}
+                i={i}
+                total={FEATURES.length}
+                progress={scrollYProgress}
+                reducedMotion={!!prefersReducedMotion}
+                setRef={(el) => {
                   cardRefs.current[i] = el;
                 }}
-                // Each card sticks at a slightly LOWER position so they stack
-                // top-32 = 128px; each subsequent card adds 24px → peek strip visible
-                className="sticky pt-4 lg:pt-6"
-                style={{
-                  top: `calc(8rem + ${i * 1.5}rem)`, // 128px + (24px × index)
-                }}
-              >
-                <div
-                  className="bg-[#191817] rounded-[15px] p-4 lg:p-5 shadow-[0_-20px_40px_-20px_rgba(0,0,0,0.6)] transition-transform duration-500 ease-out"
-                  style={{
-                    // Slight scale-down on cards below the current one for depth
-                    transform:
-                      i < activeIndex ? `scale(${1 - (activeIndex - i) * 0.02})` : 'scale(1)',
-                  }}
-                >
-                  <div className="relative aspect-[560/310] w-full rounded-[10px] overflow-hidden bg-[#d9d9d9]">
-                    <Image
-                      src={feature.image}
-                      alt={feature.alt}
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 1024px) 100vw, 50vw"
-                    />
-                  </div>
-
-                  <div className="mt-4 lg:mt-5 px-1 flex items-baseline gap-3">
-                    <span className="text-white text-[18px] sm:text-[20px] lg:text-[22px] font-medium font-neue tabular-nums">
-                      {feature.id}
-                    </span>
-                    <h3 className="text-white text-[18px] sm:text-[20px] lg:text-[24px] font-medium font-neue tracking-tight">
-                      {feature.title}
-                    </h3>
-                  </div>
-                </div>
-              </div>
+              />
             ))}
 
             {/* Spacer so the last card has room to "settle" before footer */}

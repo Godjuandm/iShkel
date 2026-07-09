@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 
 interface Product {
   id: number;
@@ -23,6 +23,10 @@ const products: Product[] = [
   { id: 6, image: '/Images_Icons/Collage_Image_6.png', alt: 'Smart Lock iShkel - Modern Interior', href: '/products', width: 440, height: 560 },
 ];
 
+// Spring smoothing for parallax — higher stiffness = tighter to scroll,
+// lower damping = more float. These values give a subtle fluid lag.
+const PARALLAX_SPRING = { stiffness: 120, damping: 30, mass: 0.5 };
+
 export default function CollageSection() {
   const sectionRef = useRef<HTMLElement>(null);
 
@@ -36,9 +40,10 @@ export default function CollageSection() {
   });
 
   // Parallax transforms — negative = upward, positive = downward.
-  const y1 = useTransform(scrollYProgress, [0, 1], [80, -120]);
-  const y2 = useTransform(scrollYProgress, [0, 1], [-40, 60]);
-  const y3 = useTransform(scrollYProgress, [0, 1], [140, -180]);
+  // Column 1: slow upward · Column 2: slight downward · Column 3: fastest upward
+  const y1 = useSpring(useTransform(scrollYProgress, [0, 1], [180, -280]), PARALLAX_SPRING);
+  const y2 = useSpring(useTransform(scrollYProgress, [0, 1], [-100, 160]), PARALLAX_SPRING);
+  const y3 = useSpring(useTransform(scrollYProgress, [0, 1], [320, -480]), PARALLAX_SPRING);
 
   const entranceTransition = { duration: 0.8, ease: [0.22, 1, 0.36, 1] as const };
 

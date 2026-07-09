@@ -103,8 +103,8 @@ type CardProduct = {
 };
 
 const ProductCard = ({ product }: { product: CardProduct }) => (
-  <Link href={`/products/${product.handle}`} className="group block">
-    <div className="bg-[#fafafa] rounded-[15px] relative h-80 flex flex-col overflow-hidden">
+  <Link href={`/products/${product.handle}`} className="group block active:scale-[0.98] transition-transform duration-200">
+    <div className="bg-[#fafafa] rounded-[15px] relative h-80 flex flex-col overflow-hidden shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-all duration-300 ease-out group-hover:-translate-y-1 group-hover:shadow-[0_16px_32px_rgba(0,0,0,0.1)]">
       <div className="absolute top-4 right-4 z-10 flex flex-col items-end gap-1.5">
         <TagBadges tags={product.tags} small />
       </div>
@@ -127,8 +127,8 @@ const ProductCard = ({ product }: { product: CardProduct }) => (
 );
 
 const FeaturedProductCard = ({ product }: { product: CardProduct }) => (
-  <Link href={`/products/${product.handle}`} className="group block h-full">
-    <div className="bg-[#fafafa] rounded-[15px] relative h-full flex flex-col overflow-hidden">
+  <Link href={`/products/${product.handle}`} className="group block h-full active:scale-[0.98] transition-transform duration-200">
+    <div className="bg-[#fafafa] rounded-[15px] relative h-full flex flex-col overflow-hidden shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-all duration-300 ease-out group-hover:-translate-y-1 group-hover:shadow-[0_20px_40px_rgba(0,0,0,0.1)]">
       <div className="absolute top-4 right-4 z-10 flex flex-col items-end gap-1.5">
         <TagBadges tags={product.tags} />
       </div>

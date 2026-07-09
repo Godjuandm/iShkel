@@ -46,7 +46,7 @@ export default async function ProductPage({ params }: PageProps) {
     : 'Consultar';
 
   return (
-    <main className="bg-white font-neue antialiased overflow-x-hidden">
+    <main className="bg-white font-neue antialiased overflow-x-clip">
       <Navbar />
       <PDPHero
         title={product.title}

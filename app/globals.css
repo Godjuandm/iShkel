@@ -18,6 +18,19 @@
   }
 }
 
+/* Safety net: collapse any CSS transition/animation not already gated by JS
+   (framer-motion's useReducedMotion, ScrollReveal's matchMedia check) down
+   to effectively instant, so nothing keeps moving for users who asked for
+   reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 @font-face {
   font-family: 'Neue Montreal';
   src: url('/Fonts/NeueMontreal-Regular.otf') format('opentype');

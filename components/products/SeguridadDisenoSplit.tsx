@@ -1,5 +1,6 @@
 // components/products/SeguridadDisenoSplit.tsx
 import Image from 'next/image';
+import Reveal from '@/components/shared/Reveal';
 
 export default function SeguridadDisenoSplit() {
   return (
@@ -8,7 +9,7 @@ export default function SeguridadDisenoSplit() {
         {/* Row 1: Square image + heading top-right */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-start">
           {/* Square image */}
-          <div className="relative aspect-square w-full max-w-[555px] rounded-[15px] bg-[#d9d9d9] overflow-hidden">
+          <Reveal direction="left" className="relative aspect-square w-full max-w-138.75 rounded-[15px] bg-[#d9d9d9] overflow-hidden">
             <Image
               src="/Images_Icons/seguridad-diseno.jpg"
               alt="Seguridad y diseño iShkel"
@@ -16,10 +17,10 @@ export default function SeguridadDisenoSplit() {
               className="object-cover"
               sizes="(max-width: 1024px) 100vw, 50vw"
             />
-          </div>
+          </Reveal>
 
           {/* Heading + paragraph (top-aligned, sits at top of row) */}
-          <div className="lg:pt-12">
+          <Reveal direction="right" delay={0.1} className="lg:pt-12">
             <h2
               className="text-[#070707] text-[26px] sm:text-[30px] lg:text-[34px] font-normal font-neue tracking-tight leading-[1.15]"
               style={{ textWrap: 'balance' } as React.CSSProperties}
@@ -34,13 +35,13 @@ export default function SeguridadDisenoSplit() {
               combinan tecnología de punta con acabados premium para una seguridad
               que se ve tan bien como funciona.
             </p>
-          </div>
+          </Reveal>
         </div>
 
         {/* Row 2: Two vertical images, second one has caption below */}
         <div className="mt-10 sm:mt-14 lg:mt-20 grid grid-cols-1 lg:grid-cols-[1.33fr_1fr] gap-8 lg:gap-10 items-start">
           {/* Left: tall image */}
-          <div className="relative aspect-[680/810] w-full rounded-[15px] bg-[#d9d9d9] overflow-hidden">
+          <Reveal direction="up" className="relative aspect-680/810 w-full rounded-[15px] bg-[#d9d9d9] overflow-hidden">
             <Image
               src="/Images_Icons/material-detail-1.jpg"
               alt="Detalle de materiales iShkel"
@@ -48,10 +49,10 @@ export default function SeguridadDisenoSplit() {
               className="object-cover"
               sizes="(max-width: 1024px) 100vw, 56vw"
             />
-          </div>
+          </Reveal>
 
           {/* Right: image + caption below */}
-          <div className="flex flex-col gap-5 lg:gap-6">
+          <Reveal direction="up" delay={0.12} className="flex flex-col gap-5 lg:gap-6">
             <div className="relative aspect-[510/672] w-full rounded-[15px] bg-[#d9d9d9] overflow-hidden">
               <Image
                 src="/Images_Icons/material-detail-2.jpg"
@@ -70,7 +71,7 @@ export default function SeguridadDisenoSplit() {
               en acero inoxidable 304. Resistentes a la corrosión, impactos y
               temperaturas extremas. Diseño que perdura.&rdquo;
             </p>
-          </div>
+          </Reveal>
         </div>
       </div>
     </section>

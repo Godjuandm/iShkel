@@ -1,8 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-
-const gradientGold = 'linear-gradient(180deg, #8C857E 0%, #C4B6A6 25%, #F2F2F2 50%, #C4B6A6 75%, #8C857E 100%)';
+import Reveal from '@/components/shared/Reveal';
 
 const products = [
   {
@@ -97,12 +96,7 @@ const rows: { key: FeatureKey; label: string }[] = [
 ];
 
 const GradientText = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
-  <span
-    className={`bg-clip-text text-transparent ${className}`}
-    style={{ backgroundImage: gradientGold }}
-  >
-    {children}
-  </span>
+  <span className={`gradient-text-gold ${className}`}>{children}</span>
 );
 
 function CellValue({ value }: { value: string }) {
@@ -117,13 +111,15 @@ export default function ComparisonTable() {
       <div className="max-w-[1360px] mx-auto">
 
         {/* Header */}
-        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-[48px] font-medium mb-12 md:mb-16 lg:mb-20">
-          <span className="text-white">¿Cuál iShkel es la mejor </span>
-          <GradientText>para ti?</GradientText>
-        </h2>
+        <Reveal as="div">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-[48px] font-medium mb-12 md:mb-16 lg:mb-20">
+            <span className="text-white">¿Cuál iShkel es la mejor </span>
+            <GradientText>para ti?</GradientText>
+          </h2>
+        </Reveal>
 
         {/* Desktop Table */}
-        <div className="hidden lg:block">
+        <Reveal as="div" delay={0.1} className="hidden lg:block">
 
           {/* Product Headers */}
           <div className="grid grid-cols-[220px_1fr_1fr_1fr] gap-0">
@@ -180,14 +176,14 @@ export default function ComparisonTable() {
 
           {/* CTA */}
           <div className="flex justify-end mt-16">
-            <button className="px-16 py-4 border-2 border-white rounded-[15px] text-white text-[20px] font-medium hover:bg-white hover:text-[#070707] transition-colors duration-300">
+            <button className="px-16 py-4 border-2 border-white rounded-[15px] text-white text-[20px] font-medium hover:bg-white hover:text-[#070707] active:scale-[0.98] transition-all duration-300">
               Comparar ahora
             </button>
           </div>
-        </div>
+        </Reveal>
 
         {/* Tablet Table */}
-        <div className="hidden md:block lg:hidden overflow-x-auto">
+        <Reveal as="div" delay={0.1} className="hidden md:block lg:hidden overflow-x-auto">
           <div className="min-w-[700px]">
             <div className="grid grid-cols-[170px_1fr_1fr_1fr] gap-0 mb-6">
               <div />
@@ -229,15 +225,15 @@ export default function ComparisonTable() {
             </div>
 
             <div className="flex justify-end mt-10">
-              <button className="px-10 py-3 border-2 border-white rounded-[15px] text-white text-[16px] font-medium hover:bg-white hover:text-[#070707] transition-colors duration-300">
+              <button className="px-10 py-3 border-2 border-white rounded-[15px] text-white text-[16px] font-medium hover:bg-white hover:text-[#070707] active:scale-[0.98] transition-all duration-300">
                 Comparar ahora
               </button>
             </div>
           </div>
-        </div>
+        </Reveal>
 
         {/* Mobile Cards */}
-        <div className="md:hidden space-y-4">
+        <Reveal as="div" delay={0.1} className="md:hidden space-y-4">
           {products.map((product) => (
             <div
               key={product.id}
@@ -273,11 +269,11 @@ export default function ComparisonTable() {
           ))}
 
           <div className="flex justify-center mt-8">
-            <button className="w-full max-w-xs px-8 py-3 border-2 border-white rounded-[15px] text-white text-base font-medium hover:bg-white hover:text-[#070707] transition-colors duration-300">
+            <button className="w-full max-w-xs px-8 py-3 border-2 border-white rounded-[15px] text-white text-base font-medium hover:bg-white hover:text-[#070707] active:scale-[0.98] transition-all duration-300">
               Comparar ahora
             </button>
           </div>
-        </div>
+        </Reveal>
 
       </div>
     </section>

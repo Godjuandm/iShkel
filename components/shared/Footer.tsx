@@ -109,7 +109,7 @@ export default function Footer() {
             </p>
             <a
               href="/products"
-              className="inline-flex items-center gap-2 px-6 py-3 border border-white/20 rounded-[15px] text-white text-[14px] font-normal hover:bg-white hover:text-[#0a0a0a] transition-all duration-300 group"
+              className="inline-flex items-center gap-2 px-6 py-3 border border-white/20 rounded-[15px] text-white text-[14px] font-normal hover:bg-white hover:text-[#0a0a0a] active:scale-[0.98] transition-all duration-300 group"
             >
               Ver Catálogo
               <span className="group-hover:translate-x-0.5 transition-transform duration-300">→</span>

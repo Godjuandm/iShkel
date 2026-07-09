@@ -6,6 +6,7 @@ import { useMemo, useState } from 'react';
 import { useCart } from '@/context/CartContext';
 import type { ShopifyProduct } from '@/lib/shopify';
 import ProductDescription from '@/components/shared/ProductDescription';
+import ProductImageCarousel from '@/components/shared/ProductImageCarousel';
 
 interface ProductShowroomProps {
   product: ShopifyProduct;
@@ -78,10 +79,6 @@ export default function ProductShowroom({ product, formattedPrice: initialFormat
     : initialFormattedPrice;
   const isOutOfStock = activeVariant ? !activeVariant.availableForSale : false;
 
-  const next = () => setActiveImage((i) => (i + 1) % Math.max(images.length, 1));
-  const prev = () =>
-    setActiveImage((i) => (i - 1 + images.length) % Math.max(images.length, 1));
-
   const selectOption = (optionName: string, value: string) =>
     setSelections((prev) => ({ ...prev, [optionName]: value }));
 
@@ -114,76 +111,17 @@ export default function ProductShowroom({ product, formattedPrice: initialFormat
       <div className="max-w-[1440px] mx-auto px-5 sm:px-8 lg:px-14">
         <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-8 lg:gap-16 items-start">
           {/* Image carousel */}
-          <div className="relative w-full">
-            <div className="relative aspect-[4/5] lg:aspect-[776/805] w-full rounded-[15px] overflow-hidden bg-[#e5e5e5]">
-              {images.map((image, i) => (
-                <Image
-                  key={image.url}
-                  src={image.url}
-                  alt={image.altText ?? `${product.title} - imagen ${i + 1}`}
-                  fill
-                  className={`object-cover transition-opacity duration-500 ease-out ${
-                    i === activeImage ? 'opacity-100 z-10' : 'opacity-0 z-0'
-                  }`}
-                  sizes="(max-width: 1024px) 100vw, 60vw"
-                  priority={i === 0}
-                />
-              ))}
-
-              {images.length > 1 && (
-                <>
-                  <button
-                    onClick={prev}
-                    aria-label="Imagen anterior"
-                    className="absolute left-3 sm:left-5 top-1/2 -translate-y-1/2 size-11 sm:size-[45px] rounded-full bg-white/90 hover:bg-white shadow-md flex items-center justify-center transition-all duration-200 active:scale-95 z-20"
-                  >
-                    <svg width="14" height="20" viewBox="0 0 14 20" fill="none">
-                      <path
-                        d="M12 2L3 10L12 18"
-                        stroke="#191817"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </button>
-                  <button
-                    onClick={next}
-                    aria-label="Imagen siguiente"
-                    className="absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 size-11 sm:size-[45px] rounded-full bg-white/90 hover:bg-white shadow-md flex items-center justify-center transition-all duration-200 active:scale-95 z-20"
-                  >
-                    <svg width="14" height="20" viewBox="0 0 14 20" fill="none">
-                      <path
-                        d="M2 2L11 10L2 18"
-                        stroke="#191817"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </button>
-                </>
-              )}
-            </div>
-
-            {/* Pagination dots */}
-            {images.length > 1 && (
-              <div className="flex items-center justify-center gap-3 mt-5">
-                {images.map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setActiveImage(i)}
-                    aria-label={`Ir a imagen ${i + 1}`}
-                    className={`rounded-full transition-all duration-300 ${
-                      i === activeImage
-                        ? 'w-2 h-2 bg-[#191817]'
-                        : 'w-1.5 h-1.5 bg-[#8c8c8c] hover:bg-[#626262]'
-                    }`}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
+          <ProductImageCarousel
+            images={images}
+            title={product.title}
+            activeIndex={activeImage}
+            onIndexChange={setActiveImage}
+            variant="floating"
+            aspectClassName="aspect-4/5 lg:aspect-776/805"
+            bgClassName="bg-[#e5e5e5]"
+            className="relative w-full"
+            priority
+          />
 
           {/* Product info */}
           <div className="flex flex-col">

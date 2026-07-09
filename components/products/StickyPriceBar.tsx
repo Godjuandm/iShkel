@@ -2,6 +2,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import { useCart } from '@/context/CartContext';
 
 interface StickyPriceBarProps {
@@ -18,6 +19,7 @@ export default function StickyPriceBar({
   const [visible, setVisible] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const { openCart, setCartCount } = useCart();
+  const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
     const onScroll = () => {
@@ -59,11 +61,16 @@ export default function StickyPriceBar({
   };
 
   return (
-    <div
-      className={`fixed bottom-0 left-0 right-0 z-40 border-t border-[#ececec] bg-white/90 backdrop-blur-xl shadow-[0_-4px_20px_-8px_rgba(0,0,0,0.1)] transition-transform duration-300 ease-out ${
-        visible ? 'translate-y-0' : 'translate-y-full'
-      }`}
+    <motion.div
+      className="fixed bottom-0 left-0 right-0 z-40 border-t border-[#ececec] bg-white/90 backdrop-blur-xl shadow-[0_-4px_20px_-8px_rgba(0,0,0,0.1)]"
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+      initial={false}
+      animate={{ y: visible ? '0%' : '100%' }}
+      transition={
+        prefersReducedMotion
+          ? { duration: 0 }
+          : { type: 'spring', stiffness: 300, damping: 30 }
+      }
     >
       <div className="max-w-[1440px] mx-auto px-5 sm:px-8 lg:px-14 py-3 sm:py-4 flex items-center justify-between gap-4">
         <div className="min-w-0 flex-1">
@@ -83,6 +90,6 @@ export default function StickyPriceBar({
           {isAdding ? 'Añadiendo…' : 'Comprar ahora'}
         </button>
       </div>
-    </div>
+    </motion.div>
   );
 }

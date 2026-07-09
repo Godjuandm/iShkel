@@ -1,6 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+
+const EASE = [0.22, 1, 0.36, 1] as const;
 
 interface FAQItem {
   id: number;
@@ -38,12 +41,8 @@ const faqs: FAQItem[] = [
   },
 ];
 
-const ChevronIcon = ({ isOpen }: { isOpen: boolean }) => (
-  <svg
-    className={`w-5 h-5 text-black transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
-    viewBox="0 0 20 20"
-    fill="none"
-  >
+const ChevronIcon = () => (
+  <svg className="w-5 h-5 text-black" viewBox="0 0 20 20" fill="none">
     <path
       d="M5 7.5L10 12.5L15 7.5"
       stroke="currentColor"
@@ -69,6 +68,7 @@ const QuestionIcon = () => (
 
 export default function FAQSection() {
   const [openId, setOpenId] = useState<number | null>(1);
+  const prefersReducedMotion = useReducedMotion();
 
   const toggleFAQ = (id: number) => {
     setOpenId(openId === id ? null : id);
@@ -113,35 +113,48 @@ export default function FAQSection() {
                 <button
                   onClick={() => toggleFAQ(faq.id)}
                   className="w-full flex items-center justify-between px-4 md:px-6 py-4 md:py-5 text-left"
+                  aria-expanded={isOpen}
                 >
                   <span className="text-black text-base md:text-[16px] font-normal pr-4">
                     {faq.question}
                   </span>
-                  <ChevronIcon isOpen={isOpen} />
+                  <motion.span
+                    className="inline-flex shrink-0"
+                    animate={{ rotate: isOpen ? 180 : 0 }}
+                    transition={{ duration: prefersReducedMotion ? 0 : 0.3, ease: EASE }}
+                  >
+                    <ChevronIcon />
+                  </motion.span>
                 </button>
 
-                <div
-                  className={`
-                    overflow-hidden transition-all duration-300 ease-in-out
-                    ${isOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'}
-                  `}
-                >
-                  <div className="px-4 md:px-6 pb-5 pt-0">
-                    <p className="text-black/80 text-sm md:text-[14px] leading-relaxed">
-                      {faq.answer}
-                    </p>
-                    {faq.videoLink && (
-                      <a
-                        href={faq.videoLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 mt-3 text-sm font-medium text-black underline underline-offset-2 hover:opacity-60 transition-opacity"
-                      >
-                        Ver video de pruebas →
-                      </a>
-                    )}
-                  </div>
-                </div>
+                <AnimatePresence initial={false}>
+                  {isOpen && (
+                    <motion.div
+                      key="content"
+                      className="overflow-hidden"
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: prefersReducedMotion ? 0 : 0.35, ease: EASE }}
+                    >
+                      <div className="px-4 md:px-6 pb-5 pt-0">
+                        <p className="text-black/80 text-sm md:text-[14px] leading-relaxed">
+                          {faq.answer}
+                        </p>
+                        {faq.videoLink && (
+                          <a
+                            href={faq.videoLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 mt-3 text-sm font-medium text-black underline underline-offset-2 hover:opacity-60 transition-opacity"
+                          >
+                            Ver video de pruebas →
+                          </a>
+                        )}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             );
           })}
@@ -152,7 +165,7 @@ export default function FAQSection() {
           <p className="text-black text-base mb-4">
             No encontraste tu pregunta aqui? Click abajo
           </p>
-          <button className="px-12 md:px-16 py-3 md:py-4 border-2 border-[#191817] rounded-[15px] text-[#191817] text-sm md:text-[16px] font-medium hover:bg-[#191817] hover:text-white transition-colors duration-300">
+          <button className="px-12 md:px-16 py-3 md:py-4 border-2 border-[#191817] rounded-[15px] text-[#191817] text-sm md:text-[16px] font-medium hover:bg-[#191817] hover:text-white active:scale-[0.98] transition-all duration-300">
             Soporte 24/7
           </button>
         </div>
