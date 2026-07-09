@@ -232,7 +232,7 @@ export default async function ProductsPage() {
 
       <section className="relative w-full h-135 md:h-250.75 overflow-hidden">
         <Image
-          src="/ProductsImages/heroProduct.png"
+          src="/ProductsImages/HeroProduct.png"
           alt="Seguridad inteligente para su hogar"
           fill
           className="object-cover object-center"
