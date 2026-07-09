@@ -1,6 +1,17 @@
 import Link from 'next/link';
 
-const navColumns = [
+type NavLink = {
+  label: string;
+  href: string;
+  external?: boolean;
+};
+
+type NavColumn = {
+  heading: string;
+  links: NavLink[];
+};
+
+const navColumns: NavColumn[] = [
   {
     heading: 'Páginas',
     links: [
