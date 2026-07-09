@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
 export default function Hero() {
@@ -19,14 +18,15 @@ export default function Hero() {
       {/* Hero Section */}
       <section className="relative h-screen w-full overflow-hidden">
         <div className="absolute inset-0">
-          <Image
-            src="/Images_Icons/homePageImg.jpeg"
-            alt="iShkel Serie Fx Smart Lock"
-            fill
-            className="object-cover object-center"
-            priority
-            quality={90}
-            sizes="100vw"
+          <video
+            src="/Videos/VideoHome.mp4"
+            poster="/Images_Icons/homePageImg.jpeg"
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            className="absolute inset-0 h-full w-full object-cover object-center"
           />
           <div className="absolute inset-0 bg-black/40" />
         </div>
@@ -42,7 +42,7 @@ export default function Hero() {
             }}
           >
             Cerradura inteligente 
-            <span> de Lujo iShkel</span>
+            <span> de lujo iShkel</span>
           </h1>
 
           <p className="mt-2 text-white text-[16px] sm:text-[18px] font-neue font-medium text-center">

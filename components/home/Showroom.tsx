@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { useMemo, useState } from 'react';
+import ProductDescription from '@/components/shared/ProductDescription';
 
 type SelectedOption = { name: string; value: string };
 
@@ -18,6 +19,7 @@ type Product = {
   title: string;
   handle: string;
   description: string;
+  descriptionHtml?: string;
   priceRange: { minVariantPrice: { amount: string; currencyCode: string } };
   images: { nodes: { url: string; altText: string | null }[] };
   options?: { name: string; values: string[] }[];
@@ -150,7 +152,7 @@ const activeVariant = useMemo(() => {
         <div className="flex flex-col lg:flex-row items-start gap-0">
           {/* Left - Carousel */}
           <div className="w-full lg:w-[58%] relative">
-            <div className="relative rounded-[15px] overflow-hidden bg-white h-80 sm:h-[480px] lg:h-[650px] w-full mt-0 lg:mt-12">
+            <div className="relative rounded-[15px] overflow-hidden bg-white aspect-4/5 lg:aspect-776/805 w-full mt-0 lg:mt-12">
               {images.map((image, i) => (
                   <Image
                     key={image.url}
@@ -211,9 +213,11 @@ const activeVariant = useMemo(() => {
             </div>
 
             <div className="pt-2 pb-4">
-              <p className="font-neue font-medium text-[14px] text-[#070707] leading-[20px]">
-                {product.description}
-              </p>
+              <ProductDescription
+                descriptionHtml={product.descriptionHtml}
+                description={product.description}
+                className="font-neue font-medium text-[14px] text-[#070707] leading-5"
+              />
             </div>
 
             {/* COLOR SELECTOR */}
@@ -278,7 +282,7 @@ const activeVariant = useMemo(() => {
               <div className="flex items-center justify-between py-[20px] border-b border-[#191817]">
                 <div className="flex items-center gap-2 overflow-hidden">
                   <span className="font-neue font-normal text-[13px] text-[#9a9a9a]">
-                    Instalado en:
+                    Instalado en puertas de:
                   </span>
                   <span
                     key={`material-${selectedMaterial}`}

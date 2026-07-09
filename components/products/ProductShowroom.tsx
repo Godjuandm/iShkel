@@ -2,9 +2,10 @@
 'use client';
 
 import Image from 'next/image';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useCart } from '@/context/CartContext';
 import type { ShopifyProduct } from '@/lib/shopify';
+import ProductDescription from '@/components/shared/ProductDescription';
 
 interface ProductShowroomProps {
   product: ShopifyProduct;
@@ -17,38 +18,76 @@ const FEATURES = [
   'Hasta 2 años de garantía',
 ];
 
-// Map color names from Shopify options to swatch colors
+// Visual mapping for swatches — Shopify only stores option value names,
+// so we map the ones we know about to a color or an image.
 const COLOR_SWATCHES: Record<string, string> = {
-  'Negro Azabache': '#292929',
   Negro: '#292929',
+  'Negro Azabache': '#292929',
   Plata: '#D9D9D9',
+  Plateado: '#D9D9D9',
   Blanco: '#F5F5F5',
+  Dorado: '#D4AF37',
+  Gris: '#888888',
+  Bronce: '#CD7F32',
 };
 
-export default function ProductShowroom({ product, formattedPrice }: ProductShowroomProps) {
+const SWATCH_IMAGES: Record<string, string> = {
+  Madera: '/Images_Icons/ColorChoice1.png',
+  Metal: '/Images_Icons/ColorChoice2.png',
+  Blindado: '/Images_Icons/ColorChoice3.png',
+  Blindada: '/Images_Icons/ColorChoice3.png',
+};
+
+function isColorOption(name: string) {
+  return name.toLowerCase().includes('color');
+}
+
+function isMaterialOption(name: string) {
+  return ['material', 'tipo', 'tipo de puerta'].includes(name.toLowerCase());
+}
+
+export default function ProductShowroom({ product, formattedPrice: initialFormattedPrice }: ProductShowroomProps) {
   const images = product.images.nodes;
   const variants = product.variants?.nodes ?? [];
+  const options = useMemo(() => product.options ?? [], [product.options]);
+
   const [activeImage, setActiveImage] = useState(0);
-  const [activeVariantId, setActiveVariantId] = useState(variants[0]?.id);
+  const [selections, setSelections] = useState<Record<string, string>>(() =>
+    Object.fromEntries(options.map((o) => [o.name, o.values[0]]))
+  );
+  const [isBuying, setIsBuying] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const { openCart, setCartCount } = useCart();
 
-  const activeVariant = variants.find((v) => v.id === activeVariantId) ?? variants[0];
+  const activeVariant = useMemo(() => {
+    if (!variants.length) return undefined;
+    return (
+      variants.find(
+        (v) =>
+          v.selectedOptions?.length &&
+          v.selectedOptions.every((opt) => selections[opt.name] === opt.value)
+      ) ?? variants[0]
+    );
+  }, [variants, selections]);
 
-  const colorOption = product.options?.find((o) =>
-    o.name.toLowerCase().includes('color')
-  );
-  const doorOption = product.options?.find((o) =>
-    o.name.toLowerCase().includes('puerta') || o.name.toLowerCase().includes('door')
-  );
+  const price = activeVariant
+    ? parseFloat(activeVariant.price.amount)
+    : parseFloat(product.priceRange.minVariantPrice.amount);
+  const formattedPrice = activeVariant
+    ? `COP ${price.toLocaleString('es-CO')}`
+    : initialFormattedPrice;
+  const isOutOfStock = activeVariant ? !activeVariant.availableForSale : false;
 
   const next = () => setActiveImage((i) => (i + 1) % Math.max(images.length, 1));
   const prev = () =>
     setActiveImage((i) => (i - 1 + images.length) % Math.max(images.length, 1));
 
-  const handleAddToCart = async () => {
-    if (!activeVariant?.id || isAdding) return;
-    setIsAdding(true);
+  const selectOption = (optionName: string, value: string) =>
+    setSelections((prev) => ({ ...prev, [optionName]: value }));
+
+  const handleAddToCart = async (openDrawer: boolean) => {
+    if (!activeVariant?.id) return;
+    openDrawer ? setIsBuying(true) : setIsAdding(true);
     try {
       const res = await fetch('/api/cart', {
         method: 'POST',
@@ -66,7 +105,7 @@ export default function ProductShowroom({ product, formattedPrice }: ProductShow
     } catch (err) {
       console.error('Add to cart failed', err);
     } finally {
-      setIsAdding(false);
+      openDrawer ? setIsBuying(false) : setIsAdding(false);
     }
   };
 
@@ -77,23 +116,26 @@ export default function ProductShowroom({ product, formattedPrice }: ProductShow
           {/* Image carousel */}
           <div className="relative w-full">
             <div className="relative aspect-[4/5] lg:aspect-[776/805] w-full rounded-[15px] overflow-hidden bg-[#e5e5e5]">
-              {images[activeImage] ? (
+              {images.map((image, i) => (
                 <Image
-                  src={images[activeImage].url}
-                  alt={images[activeImage].altText ?? product.title}
+                  key={image.url}
+                  src={image.url}
+                  alt={image.altText ?? `${product.title} - imagen ${i + 1}`}
                   fill
-                  className="object-cover transition-opacity duration-500"
+                  className={`object-cover transition-opacity duration-500 ease-out ${
+                    i === activeImage ? 'opacity-100 z-10' : 'opacity-0 z-0'
+                  }`}
                   sizes="(max-width: 1024px) 100vw, 60vw"
-                  priority
+                  priority={i === 0}
                 />
-              ) : null}
+              ))}
 
               {images.length > 1 && (
                 <>
                   <button
                     onClick={prev}
                     aria-label="Imagen anterior"
-                    className="absolute left-3 sm:left-5 top-1/2 -translate-y-1/2 size-11 sm:size-[45px] rounded-full bg-white/90 hover:bg-white shadow-md flex items-center justify-center transition-all duration-200 active:scale-95"
+                    className="absolute left-3 sm:left-5 top-1/2 -translate-y-1/2 size-11 sm:size-[45px] rounded-full bg-white/90 hover:bg-white shadow-md flex items-center justify-center transition-all duration-200 active:scale-95 z-20"
                   >
                     <svg width="14" height="20" viewBox="0 0 14 20" fill="none">
                       <path
@@ -108,7 +150,7 @@ export default function ProductShowroom({ product, formattedPrice }: ProductShow
                   <button
                     onClick={next}
                     aria-label="Imagen siguiente"
-                    className="absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 size-11 sm:size-[45px] rounded-full bg-white/90 hover:bg-white shadow-md flex items-center justify-center transition-all duration-200 active:scale-95"
+                    className="absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 size-11 sm:size-[45px] rounded-full bg-white/90 hover:bg-white shadow-md flex items-center justify-center transition-all duration-200 active:scale-95 z-20"
                   >
                     <svg width="14" height="20" viewBox="0 0 14 20" fill="none">
                       <path
@@ -155,78 +197,165 @@ export default function ProductShowroom({ product, formattedPrice }: ProductShow
               </h1>
             </div>
 
-            {product.descriptionHtml ? (
-              <div
-                className="pb-6 text-[#070707] text-[14px] font-medium font-neue leading-[20px] [&_p]:mb-1"
-                dangerouslySetInnerHTML={{ __html: product.descriptionHtml }}
-              />
-            ) : (
-              <p className="pb-6 text-[#070707] text-[14px] font-medium font-neue leading-[20px]">
-                {product.description}
-              </p>
-            )}
+            <ProductDescription
+              descriptionHtml={product.descriptionHtml}
+              description={product.description}
+              className="pb-6 text-[#070707] text-[14px] font-medium font-neue leading-[20px]"
+            />
 
-            {/* Color swatches (if Shopify option exists) */}
-            {colorOption && (
-              <div className="border-t border-b border-[#191817] py-5 flex items-center justify-between">
-                <span className="text-black text-[14px] font-medium font-neue tracking-[0.1px]">
-                  {colorOption.values.find((v) =>
-                    activeVariant?.selectedOptions?.some(
-                      (o) => o.name === colorOption.name && o.value === v
-                    )
-                  ) ?? colorOption.values[0]}
-                </span>
-                <div className="flex items-center gap-2">
-                  {colorOption.values.map((value) => {
-                    const matchVariant = variants.find((v) =>
-                      v.selectedOptions?.some(
-                        (o) => o.name === colorOption.name && o.value === value
-                      )
-                    );
-                    const isActive = activeVariant?.selectedOptions?.some(
-                      (o) => o.name === colorOption.name && o.value === value
-                    );
-                    return (
-                      <button
-                        key={value}
-                        onClick={() => matchVariant && setActiveVariantId(matchVariant.id)}
-                        aria-label={value}
-                        className={`size-[25px] rounded-full border flex items-center justify-center transition-all duration-200 ${
-                          isActive ? 'border-[#191817] border-2' : 'border-[#626262]'
-                        }`}
+            {/* Option selectors — generic, driven by whatever options this product has */}
+            {options.map((option) => {
+              const selected = selections[option.name];
+
+              if (isMaterialOption(option.name)) {
+                return (
+                  <div
+                    key={option.name}
+                    className="flex items-center justify-between py-5 border-t border-b border-[#191817]"
+                  >
+                    <div className="flex items-center gap-2 overflow-hidden">
+                      <span className="font-neue font-normal text-[13px] text-[#9a9a9a]">
+                        Instalado en puertas de:
+                      </span>
+                      <span
+                        key={`material-${selected}`}
+                        className="font-neue font-medium text-[14px] text-[#191817] inline-block animate-[labelSlide_0.35s_ease-out]"
                       >
-                        <span
-                          className="size-[18px] rounded-full block"
-                          style={{ backgroundColor: COLOR_SWATCHES[value] ?? '#D9D9D9' }}
-                        />
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
+                        {selected}
+                      </span>
+                    </div>
 
-            {/* Door type swatches (if Shopify option exists) */}
-            {doorOption && (
-              <div className="border-b border-[#191817] py-5 flex items-center justify-between">
-                <span className="text-black text-[14px] font-medium font-neue tracking-[0.1px]">
-                  Tipo de puerta ({doorOption.values[0]})
-                </span>
-                <div className="flex items-center gap-2">
-                  {doorOption.values.map((value, i) => {
-                    const fills = ['#A0846B', '#5C4530', '#E8B89A'];
-                    return (
-                      <button
-                        key={value}
-                        aria-label={value}
-                        className="size-[25px] rounded-full border border-[#aca69f] hover:border-[#191817] transition-all duration-200"
-                        style={{ backgroundColor: fills[i % fills.length] }}
-                      />
-                    );
-                  })}
+                    <div className="flex items-center gap-2">
+                      {option.values.map((materialName) => {
+                        const isActive = selected === materialName;
+                        const imageSrc = SWATCH_IMAGES[materialName];
+                        return (
+                          <button
+                            key={materialName}
+                            onClick={() => selectOption(option.name, materialName)}
+                            aria-label={`Seleccionar material ${materialName}`}
+                            aria-pressed={isActive}
+                            className={`relative w-[28px] h-[28px] rounded-full overflow-hidden flex items-center justify-center transition-all duration-300 ease-out ${
+                              isActive
+                                ? 'ring-2 ring-[#191817] ring-offset-2 ring-offset-[#f2f2f2] scale-105'
+                                : 'ring-1 ring-[#aca69f] hover:ring-[#626262] hover:scale-105'
+                            }`}
+                          >
+                            {imageSrc ? (
+                              <Image
+                                src={imageSrc}
+                                alt={materialName}
+                                width={28}
+                                height={28}
+                                className="object-cover w-full h-full"
+                              />
+                            ) : (
+                              <span
+                                className="block w-full h-full"
+                                style={{ backgroundColor: '#aca69f' }}
+                              />
+                            )}
+                            {isActive && (
+                              <span className="absolute inset-0 bg-black/10 pointer-events-none" />
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              }
+
+              const label = isColorOption(option.name) ? 'Color' : option.name;
+              return (
+                <div
+                  key={option.name}
+                  className="flex items-center justify-between py-5 border-t border-[#191817] last:border-b"
+                >
+                  <div className="flex items-center gap-2 overflow-hidden">
+                    <span className="font-neue font-normal text-[13px] text-[#9a9a9a]">
+                      {label}:
+                    </span>
+                    <span
+                      key={`${option.name}-${selected}`}
+                      className="font-neue font-medium text-[14px] text-[#191817] inline-block animate-[labelSlide_0.35s_ease-out]"
+                    >
+                      {selected}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    {option.values.map((value) => {
+                      const isActive = selected === value;
+                      const swatchColor = COLOR_SWATCHES[value];
+                      const swatchImage = SWATCH_IMAGES[value];
+
+                      if (swatchImage || swatchColor) {
+                        return (
+                          <button
+                            key={value}
+                            onClick={() => selectOption(option.name, value)}
+                            aria-label={`Seleccionar ${label.toLowerCase()} ${value}`}
+                            aria-pressed={isActive}
+                            className={`relative w-[28px] h-[28px] rounded-full overflow-hidden flex items-center justify-center transition-all duration-300 ease-out ${
+                              isActive
+                                ? 'ring-2 ring-[#191817] ring-offset-2 ring-offset-[#f2f2f2]'
+                                : 'ring-1 ring-[#c4c4c4] hover:ring-[#626262]'
+                            }`}
+                          >
+                            {swatchImage ? (
+                              <Image
+                                src={swatchImage}
+                                alt={value}
+                                width={28}
+                                height={28}
+                                className="object-cover w-full h-full"
+                              />
+                            ) : (
+                              <span
+                                className={`block rounded-full transition-all duration-300 ease-out ${
+                                  isActive ? 'w-[18px] h-[18px]' : 'w-[20px] h-[20px]'
+                                }`}
+                                style={{ backgroundColor: swatchColor }}
+                              />
+                            )}
+                            {isActive && swatchColor && (
+                              <svg
+                                className="absolute inset-0 m-auto w-3 h-3 text-white pointer-events-none mix-blend-difference animate-[checkPop_0.3s_ease-out]"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="3"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              >
+                                <path d="M5 13l4 4L19 7" />
+                              </svg>
+                            )}
+                          </button>
+                        );
+                      }
+
+                      // Fallback: no known visual for this value, render a text pill
+                      return (
+                        <button
+                          key={value}
+                          onClick={() => selectOption(option.name, value)}
+                          aria-pressed={isActive}
+                          className={`px-3 h-[28px] rounded-full text-[12px] font-neue font-medium transition-all duration-200 ${
+                            isActive
+                              ? 'bg-[#191817] text-white'
+                              : 'bg-white text-[#191817] ring-1 ring-[#c4c4c4] hover:ring-[#626262]'
+                          }`}
+                        >
+                          {value}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-            )}
+              );
+            })}
 
             {/* Features */}
             <ul className="pt-6 pb-2 space-y-2">
@@ -255,23 +384,33 @@ export default function ProductShowroom({ product, formattedPrice }: ProductShow
               ))}
             </ul>
 
-            {/* Price */}
-            <p className="text-[#191817] text-[24px] font-neue leading-[36px] py-4">
-              {formattedPrice}
-            </p>
+            {/* Price — animates when the selected variant changes */}
+            <div className="pt-2 pb-4">
+              <p
+                key={`price-${activeVariant?.id}`}
+                className="font-neue font-normal text-[24px] text-[#191817] animate-[labelSlide_0.4s_ease-out]"
+              >
+                {formattedPrice}
+              </p>
+              {isOutOfStock && (
+                <p className="font-neue text-[13px] text-[#c62828] mt-1">
+                  Esta combinación está agotada
+                </p>
+              )}
+            </div>
 
             {/* CTAs */}
             <div className="flex flex-col gap-3 max-w-[374px]">
               <button
-                onClick={handleAddToCart}
-                disabled={!activeVariant?.availableForSale || isAdding}
+                onClick={() => handleAddToCart(true)}
+                disabled={!activeVariant?.availableForSale || isBuying || isAdding}
                 className="h-12 w-full border-2 border-[#191817] rounded-[15px] text-[#191817] text-[14.5px] font-medium font-neue tracking-[0.1px] hover:bg-[#191817] hover:text-white active:scale-[0.99] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isAdding ? 'Añadiendo…' : 'Comprar ahora'}
+                {isBuying ? 'Cargando…' : 'Comprar ahora'}
               </button>
               <button
-                onClick={handleAddToCart}
-                disabled={!activeVariant?.availableForSale || isAdding}
+                onClick={() => handleAddToCart(false)}
+                disabled={!activeVariant?.availableForSale || isBuying || isAdding}
                 className="relative h-[51px] w-full rounded-[11.5px] bg-[#3b3b3b] p-[1.5px] active:scale-[0.99] transition-transform duration-200 group disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <div className="relative h-full w-full rounded-[10px] bg-black overflow-hidden flex items-center justify-center">

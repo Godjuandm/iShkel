@@ -1,7 +1,7 @@
 import Hero from '@/components/home/Hero';
 import BrandSection from '@/components/home/BrandSection';
 import Showroom from '@/components/home/Showroom';
-import { getProductWithVariants } from '@/lib/shopify';  // ← changed
+import { getProductWithVariants, getAllProducts } from '@/lib/shopify';  // ← changed
 import Collage from '@/components/home/Collage';
 import FounderQuoteSection from '@/components/home/FounderQuoteSection';
 import TestimonialSection from '@/components/home/TestimonialSection';
@@ -13,7 +13,16 @@ import Footer from '@/components/shared/Footer';
 import Navbar from '@/components/shared/Navbar';
 
 export default async function Home() {
-  const featuredProduct = await getProductWithVariants('cerradura-fx-321312');  // ← changed
+  let featuredProduct = await getProductWithVariants('cerradura-fx-321312');  // ← changed
+
+  // If the pinned product was deleted/renamed in Shopify, fall back to
+  // whatever product exists first instead of silently hiding the section.
+  if (!featuredProduct) {
+    const [fallback] = await getAllProducts();
+    if (fallback) {
+      featuredProduct = await getProductWithVariants(fallback.handle);
+    }
+  }
 
   return (
     <main>

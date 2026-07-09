@@ -215,6 +215,7 @@ export async function getProductWithVariants(handle: string) {
         title
         handle
         description
+        descriptionHtml
         priceRange {
           minVariantPrice {
             amount
@@ -227,7 +228,7 @@ export async function getProductWithVariants(handle: string) {
             altText
           }
         }
-        options {              
+        options {
           name
           values
         }

@@ -104,23 +104,23 @@ type CardProduct = {
 
 const ProductCard = ({ product }: { product: CardProduct }) => (
   <Link href={`/products/${product.handle}`} className="group block">
-    <div className="bg-[#fafafa] rounded-[15px] relative h-60 flex flex-col overflow-hidden">
+    <div className="bg-[#fafafa] rounded-[15px] relative h-80 flex flex-col overflow-hidden">
       <div className="absolute top-4 right-4 z-10 flex flex-col items-end gap-1.5">
         <TagBadges tags={product.tags} small />
       </div>
-      <div className="relative flex-1 w-full">
+      <div className="relative flex-1 w-full p-4">
         <Image
           src={product.image}
           alt={product.title}
           fill
           quality={95}
-          className="object-cover group-hover:scale-105 transition-transform duration-300"
+          className="object-contain group-hover:scale-105 transition-transform duration-300"
           sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 22vw"
         />
       </div>
       <div className="flex items-center justify-between px-4 py-3.5 shrink-0 bg-[#fafafa]">
         <span className="text-[#191817] text-[11px] font-normal">COP {product.price}</span>
-        <ColorSwatches colors={product.colors} />
+        <span className="text-[#191817] text-[11px] font-normal truncate max-w-[60%]">{product.title}</span>
       </div>
     </div>
   </Link>
@@ -137,13 +137,13 @@ const FeaturedProductCard = ({ product }: { product: CardProduct }) => (
           {product.title}
         </h3>
       </div>
-      <div className="relative flex-1 w-full mt-4">
+      <div className="relative flex-1 w-full mt-4 p-5">
         <Image
           src={product.image}
           alt={product.title}
           fill
           quality={95}
-          className="object-cover group-hover:scale-105 transition-transform duration-300"
+          className="object-contain group-hover:scale-105 transition-transform duration-300"
           sizes="(max-width: 1024px) 100vw, 33vw"
           priority
         />
@@ -215,10 +215,10 @@ export default async function ProductsPage() {
           </ScrollReveal>
           {featuredProduct && (
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-6">
-              <ScrollReveal direction="up" distance={32} duration={0.9} className="h-124">
+              <ScrollReveal direction="up" distance={32} duration={0.9} className="h-164">
                 <FeaturedProductCard product={featuredProduct} />
               </ScrollReveal>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-6 auto-rows-[240px]">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-6 auto-rows-[320px]">
                 {gridProducts.slice(0, 6).map((product, i) => (
                   <ScrollReveal key={product.handle} direction="up" distance={24} duration={0.7} delay={i * 0.08}>
                     <ProductCard product={product} />
@@ -232,7 +232,7 @@ export default async function ProductsPage() {
 
       <section className="relative w-full h-135 md:h-250.75 overflow-hidden">
         <Image
-          src="/ProductsImages/hero-image.png"
+          src="/ProductsImages/heroProduct.png"
           alt="Seguridad inteligente para su hogar"
           fill
           className="object-cover object-center"

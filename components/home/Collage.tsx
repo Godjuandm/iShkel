@@ -54,7 +54,8 @@ export default function CollageSection() {
           viewport={{ once: true, amount: 0.2 }}
           transition={entranceTransition}
         >
-          <h2 className="text-3xl md:text-4xl font-neue font-medium text-[#1a1a1a] mt-3 mb-4 leading-tight">
+
+          <h1 className="text-3xl md:text-[50px] font-neue font-medium text-[#1a1a1a] mt-3 mb-4 leading-tight">
             Projectos{' '}
             <span
               className="bg-clip-text text-transparent"
@@ -64,7 +65,7 @@ export default function CollageSection() {
             >
               iShkel
             </span>
-          </h2>
+          </h1>
           <p className="text-[15px] text-[#555] leading-relaxed max-w-xl mx-auto">
             Somos la elección predilecta en Bogotá, Medellín, y el eje Cafetero 
             para quienes buscan reemplazar sus chapas tradicionales por la tecnologia de iShkel elegancia y control total.
