@@ -22,8 +22,8 @@ export interface FAQItem {
 }
 
 export const testimonials: Testimonial[] = [
-  { id: 1, image: '/Images_Icons/testimonial_1.png', comment: 'Excelente servicio y calidad de los productos.', username: 'alvarojosevera', height: 'tall', offsetY: 'bottom' },
-  { id: 2, image: '/Images_Icons/test_2.png', comment: 'Muy satisfecho con la instalación y el soporte.', username: 'Juandmr_01', height: 'tall', offsetY: 'middle' },
+  { id: 1, image: '/Images_Icons/Testimonial_1.png', comment: 'Excelente servicio y calidad de los productos.', username: 'alvarojosevera', height: 'tall', offsetY: 'bottom' },
+  { id: 2, image: '/Images_Icons/Test_2.png', comment: 'Muy satisfecho con la instalación y el soporte.', username: 'Juandmr_01', height: 'tall', offsetY: 'middle' },
   { id: 3, image: '/Images_Icons/test_3.jpg', comment: 'La mejor opción para mi proyecto inmobiliario.', username: 'Pablo_Garcia', height: 'medium', offsetY: 'top' },
   { id: 4, image: '/Images_Icons/Collage_Image_5.png', comment: 'Confianza total en la marca y su equipo.', username: 'Chavez_2', height: 'tall', offsetY: 'middle' },
   { id: 5, image: '/Images_Icons/homePageImg.jpeg', comment: 'Un gran valor agregado para nuestro negocio.', username: 'Pequenin_galactic', height: 'tall', offsetY: 'bottom' },
